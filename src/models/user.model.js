@@ -34,9 +34,11 @@ const userSchema = new Schema(
 		password: {
 			type: String,
 			required: [true, "Password is required"],
+			select: false,
 		},
 		refreshToken: {
 			type: String,
+			select: false,
 		},
 	},
 	{
@@ -56,12 +58,15 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 userSchema.methods.generateAccessToken = async function () {
-	return jwt.sign({
-		_id: this._id,
-		email: this.email,
-		username: this.username,
-		fullName: this.firstName + this.lastName,
-	});
+	return jwt.sign(
+		{
+			_id: this._id,
+			email: this.email,
+			username: this.username,
+			fullName: this.firstName + " " + this.lastName,
+		},
+		process.env.JWT_SECRET
+	);
 };
 
 export const User = mongoose.model("User", userSchema);
