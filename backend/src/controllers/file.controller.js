@@ -6,7 +6,7 @@ const getFiles = asyncHandler(async (req, res) => {
 	const user = req.user;
 
 	const files = await fileService.getFiles(user?.rootFolder);
-	return res.status(200).json(new ApiResponse(200, files));
+	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
 const createFile = asyncHandler(async (req, res) => {
@@ -44,7 +44,6 @@ const createFolder = asyncHandler(async (req, res) => {
 	return res
 		.status(201)
 		.json(new ApiResponse(201, { folder }, "Folder created successfully"));
-
 });
 
 export default { getFiles, createFile, createFolder };

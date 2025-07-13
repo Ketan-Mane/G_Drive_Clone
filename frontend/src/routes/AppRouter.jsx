@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { Login, Register } from "@/features/auth/components";
 import ProtectedRoute from "./ProtectedRoute";
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import DashboardLayout from "@/layout/DashboardLayout";
 import HomePage from "@/pages/HomePage";
 import App from "@/App";
 

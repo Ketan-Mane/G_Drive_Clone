@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useRegister } from "../hooks";
 import Loader from "@/components/common/Loader";
 import toast from "react-hot-toast";
+import useRegister from "../hooks/useRegister";
 
 const Register = () => {
 	const form = useForm({
@@ -40,7 +40,7 @@ const Register = () => {
 		await registerUser(data, {
 			onSuccess: (responseData) => {
 				const { data, success, message } = responseData;
-				if(success){
+				if (success) {
 					toast.success(message || "Registered Successfully");
 					navigate("/login");
 				}

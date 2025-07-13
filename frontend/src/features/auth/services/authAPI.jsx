@@ -2,12 +2,9 @@ import axios from "@/services/apiClient";
 
 const register = async (payload) => {
 	try {
-		const { data, status } = await axios.post(
-			"/api/auth/register",
-			payload
-		);
+		const { data, status } = await axios.post("/auth/register", payload);
 		if (data.success && status === 201) {
-			return data
+			return data;
 		}
 		return null;
 	} catch (error) {
@@ -17,7 +14,7 @@ const register = async (payload) => {
 
 const login = async (payload) => {
 	try {
-		const { data, status } = await axios.post("/api/auth/login", payload);
+		const { data, status } = await axios.post("/auth/login", payload);
 		if (data.success && status === 200) {
 			return data;
 		}
@@ -27,9 +24,9 @@ const login = async (payload) => {
 	}
 };
 
-const loginVerify = async () => {
+const getCurrentUser = async () => {
 	try {
-		const { data, status } = await axios.post("/api/auth/verify-login");
+		const { data, status } = await axios.post("/auth/me");
 		if (data.success && status === 200) {
 			return data;
 		}
@@ -41,7 +38,7 @@ const loginVerify = async () => {
 
 const logout = async () => {
 	try {
-		const { data, status } = await axios.post("/api/auth/logout");
+		const { data, status } = await axios.post("/auth/logout");
 		return data.success && status === 200;
 	} catch (error) {
 		console.error("Logout error:", error);
@@ -49,4 +46,4 @@ const logout = async () => {
 	}
 };
 
-export { register, login, loginVerify, logout };
+export { register, login, getCurrentUser, logout };

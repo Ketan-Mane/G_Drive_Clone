@@ -1,9 +1,12 @@
-import React from 'react'
+import Folders from "@/features/files/components/Folder";
+import React from "react";
 
 const HomePage = () => {
 	return (
-		<div>HomePage</div>
-	)
-}
+		<div>
+			<Folders />
+		</div>
+	);
+};
 
-export default HomePage
+export default HomePage;

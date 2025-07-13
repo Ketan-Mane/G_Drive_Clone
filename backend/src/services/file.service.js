@@ -35,7 +35,9 @@ const createFile = async ({ name, size, owner, parent, isFolder = false }) => {
 		if (error.code === 11000) {
 			throw new ApiError(
 				409,
-				"File with same name already exists",
+				`${
+					isFolder ? "Folder" : "File"
+				}  with same name already exists`,
 				null,
 				null
 			);

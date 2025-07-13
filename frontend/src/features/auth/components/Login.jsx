@@ -10,11 +10,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import { useLogin } from "../hooks";
 import Loader from "@/components/common/Loader";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../authSlice";
+import useLogin from "../hooks/useLogin";
 
 const Login = () => {
 	const form = useForm({
@@ -35,14 +35,6 @@ const Login = () => {
 	const onSubmit = async () => {
 		const payload = form.getValues();
 		await loginUser(payload, {
-			onSuccess: (responseData) => {
-				const { data, success, message } = responseData;
-				if (success) {
-					dispatch(login(data?.user));
-					navigate("/");
-					toast.success(message || "Login Successfull");
-				}
-			},
 			onError: (error) => {
 				if (error?.response) {
 					const { data, message } = error?.response?.data;

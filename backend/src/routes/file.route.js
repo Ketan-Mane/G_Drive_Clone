@@ -10,6 +10,6 @@ router
 	.route("/")
 	.post(authMiddleware, upload.single("file"), fileController.createFile);
 
-router.route('/folder').post(authMiddleware, fileController.createFolder);
+router.route("/folder").post(authMiddleware, fileController.createFolder);
 
 export default router;

@@ -13,7 +13,7 @@ router
 	.post(validateRegisterUser, authController.registerUser);
 router.route("/login").post(validateLoginUser, authController.loginUser);
 router.route("/logout").post(authMiddleware, authController.logoutUser);
-router.route("/verify-login").post(authMiddleware, authController.verifyLoggedInUser);
+router.route("/me").post(authMiddleware, authController.verifyLoggedInUser);
 router.route("/refresh-token").post(authController.refreshAccessToken);
 
 export default router;
