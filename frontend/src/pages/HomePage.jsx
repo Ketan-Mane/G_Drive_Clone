@@ -1,10 +1,9 @@
-import Folders from "@/features/files/components/Folder";
-import React from "react";
+import ListFiles from "@/features/files/components/ListFiles";
 
 const HomePage = () => {
 	return (
 		<div>
-			<Folders />
+			<ListFiles />
 		</div>
 	);
 };

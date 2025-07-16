@@ -1,4 +1,3 @@
-import React from "react";
 import useFiles from "../../hooks/useFiles";
 import SingleFolder from "./SingleFolder";
 
@@ -7,9 +6,9 @@ const Folders = () => {
 
 	const folders = data?.filter((item) => item?.isFolder) || [];
 	return (
-		<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 cursor-default">
+		<div className="grid cursor-default grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 			{folders?.map((folder) => (
-				<SingleFolder folder={folder} />
+				<SingleFolder key={folder?._id} folder={folder} />
 			))}
 		</div>
 	);

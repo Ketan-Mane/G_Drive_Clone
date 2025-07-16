@@ -5,6 +5,7 @@ const useFiles = () => {
 	return useQuery({
 		queryKey: ["files"],
 		queryFn: getFiles,
+		refetchOnWindowFocus: false,
 	});
 };
 

@@ -18,10 +18,11 @@ import {
 	Settings,
 	Users,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { openModal } from "@/store/modal/modalSlice";
+import UploadFile from "@/features/files/components/File/UploadFile";
 
 const menuOptins = [
 	{
@@ -42,17 +43,22 @@ const menuOptins = [
 ];
 const Sidebar = () => {
 	const dispatch = useDispatch();
+	const uploadRef = useRef();
 
 	const { mutateAsync: logoutUser } = useLogout();
 	const handleLogout = async () => {
 		await logoutUser();
 	};
 
+	const handleFileUploadClick = () => {
+		uploadRef.current?.openFileDialog();
+	};
+
 	return (
 		<>
-			<aside className="w-full lg:w-64 border-r hidden lg:flex flex-col">
+			<aside className="hidden w-full flex-col border-r lg:flex lg:w-64">
 				<div className="p-6 text-xl font-bold">My Dashboard</div>
-				<nav className="w-full h-full flex flex-col gap-2 p-4">
+				<nav className="flex h-full w-full flex-col gap-2 p-4">
 					<DropdownMenu>
 						<DropdownMenuTrigger>
 							<Button
@@ -69,14 +75,14 @@ const Sidebar = () => {
 										openModal({
 											modalType: "newFolder",
 											title: "New Folder",
-										})
+										}),
 									)
 								}
 							>
 								<FolderPlus /> New Folder
 							</DropdownMenuItem>
 							<DropdownMenuSeparator />
-							<DropdownMenuItem>
+							<DropdownMenuItem onClick={handleFileUploadClick}>
 								<FileUp /> New File
 							</DropdownMenuItem>
 						</DropdownMenuContent>
@@ -101,12 +107,13 @@ const Sidebar = () => {
 			</aside>
 
 			{/* Mobile Header */}
-			<div className="w-full lg:hidden flex items-center justify-between p-4 bg-white border-b">
+			<div className="flex w-full items-center justify-between border-b bg-white p-4 lg:hidden">
 				<Button variant="ghost" size="icon">
 					<Menu />
 				</Button>
 				<h1 className="text-lg font-bold">Dashboard</h1>
 			</div>
+			<UploadFile ref={uploadRef} />
 		</>
 	);
 };
@@ -119,8 +126,8 @@ function NavItem({ to, icon, label }) {
 			to={to}
 			className={({ isActive }) =>
 				clsx(
-					"flex items-center gap-2 px-4 py-2 rounded-md hover:bg-muted transition",
-					isActive ? "bg-gray-200 font-medium" : ""
+					"hover:bg-muted flex items-center gap-2 rounded-md px-4 py-2 transition",
+					isActive ? "bg-gray-200 font-medium" : "",
 				)
 			}
 		>
