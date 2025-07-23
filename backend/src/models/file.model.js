@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import generateThumbnail from "../utils/generateThumbnail.js";
 
 const fileSchema = new Schema(
 	{
