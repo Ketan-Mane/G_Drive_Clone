@@ -3,9 +3,8 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 
 const getFiles = asyncHandler(async (req, res) => {
-	const user = req.user;
-
-	const files = await fileService.getFiles(user?.rootFolder);
+	const { parent } = req.params;
+	const files = await fileService.getFiles(parent);
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
@@ -46,4 +45,20 @@ const createFolder = asyncHandler(async (req, res) => {
 		.json(new ApiResponse(201, { folder }, "Folder created successfully"));
 });
 
-export default { getFiles, createFile, createFolder };
+const updateFile = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	const { parent, action } = req.body;
+	let file;
+	switch (action) {
+		case "move":
+			file = await fileService.moveFile({ id, parent });
+			break;
+		default:
+			return res
+				.status(400)
+				.json(new ApiResponse(400, null, "Invalid action"));
+	}
+
+	return res.status(200).json(new ApiResponse(200, { file }, "Success"));
+});
+export default { getFiles, createFile, createFolder, updateFile };

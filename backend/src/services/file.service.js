@@ -58,4 +58,57 @@ const updateThumbnail = async ({ id, file }) => {
 	}
 };
 
-export default { getFiles, createFile, updateThumbnail };
+const moveFile = async ({ id, parent }) => {
+	try {
+		const checkFile = await File.findById(id);
+
+		console.log(checkFile);
+		console.log(checkFile?.parent.equals(parent));
+		console.log(parent);
+		if (checkFile?.parent.equals(parent)) {
+			throw new ApiError(
+				400,
+				"Destination folder should not be same as the parent folder"
+			);
+		}
+		const file = await File.findByIdAndUpdate(id, {
+			parent,
+		});
+
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const renameFile = async ({ id, name }) => {
+	try {
+		const file = await File.findByIdAndUpdate(id, {
+			name,
+		});
+
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const moveToTrash = async ({ id, parent }) => {
+	try {
+		const file = await File.findByIdAndUpdate(id, {
+			isTrashed: true,
+		});
+
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
+export default {
+	getFiles,
+	createFile,
+	updateThumbnail,
+	moveFile,
+	renameFile,
+	moveToTrash,
+};

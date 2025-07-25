@@ -19,7 +19,7 @@ const SingleFile = ({ file }) => {
 			{...listeners}
 			{...attributes}
 			style={style}
-			className="flex flex-col gap-2 rounded-md border p-2 transition-colors duration-300 hover:bg-gray-100"
+			className="flex flex-col gap-2 rounded-md border p-2 transition-colors duration-300 bg-white hover:bg-gray-100"
 		>
 			<img
 				src={file?.thumbnailUrl}

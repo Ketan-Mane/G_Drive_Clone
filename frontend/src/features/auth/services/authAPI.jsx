@@ -28,7 +28,7 @@ const getCurrentUser = async () => {
 	try {
 		const { data, status } = await axios.post("/auth/me");
 		if (data.success && status === 200) {
-			return data;
+			return data?.data?.user;
 		}
 		return null;
 	} catch (error) {

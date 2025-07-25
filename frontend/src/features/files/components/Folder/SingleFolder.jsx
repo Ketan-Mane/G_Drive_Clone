@@ -3,8 +3,11 @@ import { Folder } from "lucide-react";
 import { CSS } from "@dnd-kit/utilities";
 import { useCallback } from "react";
 import clsx from "clsx";
+import { useDispatch } from "react-redux";
+import { setCurrentFolderId } from "../../fileSlice";
 
 const SingleFolder = ({ folder }) => {
+	const dispatch = useDispatch();
 	const { setNodeRef: setDroppableNodeRef, isOver } = useDroppable({
 		id: folder?._id,
 		data: {
@@ -46,6 +49,7 @@ const SingleFolder = ({ folder }) => {
 				"flex gap-3 rounded-md border p-2 transition-colors duration-300 hover:bg-gray-100",
 				isOver ? "bg-neutral-200" : "",
 			)}
+			onClick={() => dispatch(setCurrentFolderId(folder?._id))}
 		>
 			<Folder />
 			<p className="font-semibold">{folder.name}</p>

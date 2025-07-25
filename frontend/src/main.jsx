@@ -1,7 +1,6 @@
 import { createRoot } from "react-dom/client";
 import { StrictMode } from "react";
 import { RouterProvider } from "react-router-dom";
-import App from "./App";
 import AppRouter from "./routes/AppRouter";
 import "./index.css";
 import { Provider } from "react-redux";

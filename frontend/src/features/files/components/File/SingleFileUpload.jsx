@@ -6,7 +6,7 @@ const SingleFileUpload = ({ upload }) => {
 
 	return (
 		<div className="flex items-center justify-between">
-			<span>{file.name}</span>
+			<span className="truncate">{file.name}</span>
 			{status === "pending" ? (
 				<LoaderCircle size={20} className="animate-spin" />
 			) : status === "uploading" ? (
@@ -14,7 +14,7 @@ const SingleFileUpload = ({ upload }) => {
 			) : status === "success" ? (
 				<Check
 					size={20}
-					className="rounded-full bg-green-600 p-0.5 text-white"
+					className="shrink-0 rounded-full bg-green-600 p-0.5 text-white"
 				/>
 			) : (
 				<X

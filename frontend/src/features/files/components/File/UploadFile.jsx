@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { ChevronDown, X } from "lucide-react";
 import React, {
 	forwardRef,
-	useEffect,
 	useImperativeHandle,
 	useRef,
 	useState,
@@ -13,7 +12,8 @@ import toast from "react-hot-toast";
 
 const UploadFile = forwardRef((props, ref) => {
 	const fileInputRef = useRef(null);
-	const [close, setClose] = useState(false);
+	const [close, setClose] = useState(true);
+	const [minimize, setMinimize] = useState(false);
 	const [uploads, setUploads] = useState([]);
 
 	const { mutateAsync: uploadFile } = useUploadFile();
@@ -34,6 +34,7 @@ const UploadFile = forwardRef((props, ref) => {
 			status: "pending",
 		}));
 		setUploads(uploadEntries);
+		setClose(false);
 		event.target.value = null;
 		uploadEntries.forEach(async (upload, index) => {
 			const { file } = upload;
@@ -82,39 +83,13 @@ const UploadFile = forwardRef((props, ref) => {
 		});
 	};
 
-	const startFileUpload = async () => {
-		uploads.forEach(async (upload, index) => {
-			const { file } = upload;
-
-			setUploads((prev) => {
-				const updated = [...prev];
-				updated[index] = {
-					...updated[index],
-					status: "uploading",
-				};
-				return updated;
-			});
-			await uploadFile(
-				{ file },
-				{
-					onSuccess: () => {
-						setUploads((prev) => {
-							const updated = [...prev];
-							updated[index] = {
-								...updated[index],
-								progress: 100,
-								status: "success",
-							};
-							return updated;
-						});
-					},
-				},
-			);
-		});
-	};
-
 	return (
-		<div className="absolute right-2 bottom-3 flex w-sm flex-col gap-y-1 rounded-md p-2 shadow-md select-none">
+		<div
+			className={clsx(
+				"right-2 bottom-3 flex w-sm flex-col gap-y-1 rounded-md p-2 shadow-md select-none",
+				close ? "hidden" : "absolute",
+			)}
+		>
 			<input
 				type="file"
 				ref={fileInputRef}
@@ -126,20 +101,27 @@ const UploadFile = forwardRef((props, ref) => {
 				<h3 className="font-semibold">Uploading 1 Item</h3>
 				<span className="flex items-center gap-2">
 					<ChevronDown
-						onClick={() => setClose(!close)}
+						onClick={() => setMinimize(!minimize)}
 						size={22}
 						className={clsx(
 							"cursor-pointer transition",
 							close ? "rotate-180" : "",
 						)}
 					/>
-					<X size={20} className="cursor-pointer" />
+					<X
+						size={20}
+						onClick={() => {
+							setClose(true);
+							setUploads([]);
+						}}
+						className="cursor-pointer"
+					/>
 				</span>
 			</div>
 			<div
 				className={clsx(
 					"flex flex-col gap-1 overflow-x-hidden overflow-y-auto pr-1",
-					close ? "max-h-0" : "max-h-40",
+					minimize ? "max-h-0" : "max-h-40",
 				)}
 			>
 				{uploads?.map((upload, index) => (

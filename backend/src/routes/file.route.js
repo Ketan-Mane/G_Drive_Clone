@@ -5,11 +5,12 @@ import fileController from "../controllers/file.controller.js";
 
 const router = Router();
 
-router.route("/").get(authMiddleware, fileController.getFiles);
+router.route("/:parent").get(authMiddleware, fileController.getFiles);
 router
 	.route("/")
 	.post(authMiddleware, upload.single("file"), fileController.createFile);
 
 router.route("/folder").post(authMiddleware, fileController.createFolder);
+router.route("/:id").patch(authMiddleware, fileController.updateFile);
 
 export default router;

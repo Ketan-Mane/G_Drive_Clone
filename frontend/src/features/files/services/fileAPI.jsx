@@ -1,7 +1,7 @@
 import axiosInstance from "@/services/apiClient";
 
-export const getFiles = async () => {
-	const { data } = await axiosInstance.get("/files");
+export const getFiles = async (parent) => {
+	const { data } = await axiosInstance.get(`/files/${parent}`);
 	const { files } = data.data;
 	return files;
 };
@@ -18,5 +18,10 @@ export const uploadFile = async ({ file, parent_id }) => {
 
 export const createFolder = async (payload) => {
 	const { data } = await axiosInstance.post("/files/folder", payload);
+	return data;
+};
+
+export const updateFile = async ({ id, payload }) => {
+	const { data } = await axiosInstance.patch(`/files/${id}`, payload);
 	return data;
 };
