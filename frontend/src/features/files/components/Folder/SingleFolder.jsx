@@ -4,7 +4,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useCallback } from "react";
 import clsx from "clsx";
 import { useDispatch } from "react-redux";
-import { setCurrentFolderId } from "../../fileSlice";
+import { pushToBreadcrumb, setCurrentFolderId } from "../../fileSlice";
 
 const SingleFolder = ({ folder }) => {
 	const dispatch = useDispatch();
@@ -49,7 +49,13 @@ const SingleFolder = ({ folder }) => {
 				"flex gap-3 rounded-md border p-2 transition-colors duration-300 hover:bg-gray-100",
 				isOver ? "bg-neutral-200" : "",
 			)}
-			onClick={() => dispatch(setCurrentFolderId(folder?._id))}
+			// onClick={() => dispatch(setCurrentFolderId(folder?._id))}
+			onDoubleClick={() => {
+				dispatch(
+					pushToBreadcrumb({ id: folder?._id, name: folder?.name }),
+				);
+				dispatch(setCurrentFolderId(folder?._id));
+			}}
 		>
 			<Folder />
 			<p className="font-semibold">{folder.name}</p>

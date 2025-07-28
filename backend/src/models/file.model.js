@@ -5,7 +5,6 @@ const fileSchema = new Schema(
 		name: {
 			type: String,
 			required: [true, "File name is required"],
-			unique: true,
 		},
 		isFolder: { type: Boolean, default: false },
 		isTrashed: { type: Boolean, default: false },

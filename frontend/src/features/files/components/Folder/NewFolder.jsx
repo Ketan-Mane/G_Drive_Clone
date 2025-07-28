@@ -6,14 +6,16 @@ import { useForm } from "react-hook-form";
 import useCreateFolder from "../../hooks/useCreateFolder";
 import Loader from "@/components/common/Loader";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { closeModal } from "@/store/modal/modalSlice";
 
 const NewFolder = () => {
 	const dispatch = useDispatch();
+	const { currentFolderId } = useSelector((state) => state.file);
 	const form = useForm({
 		defaultValues: {
 			name: "",
+			parent: currentFolderId,
 		},
 	});
 

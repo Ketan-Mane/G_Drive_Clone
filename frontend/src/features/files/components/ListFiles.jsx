@@ -9,16 +9,10 @@ import Files from "./File";
 import Folder from "./Folder";
 import toast from "react-hot-toast";
 import useMoveFile from "../hooks/useMoveFile";
-import { useSelector } from "react-redux";
+import BreadCrumb from "./BreadCrumb";
 
 const ListFiles = () => {
 	const { mutateAsync: moveFile } = useMoveFile();
-
-	const { rootFolderId, currentFolderId } = useSelector(
-		(state) => state.file,
-	);
-	console.log(currentFolderId);
-	console.log(rootFolderId);
 
 	const mouseSensor = useSensor(MouseSensor, {
 		activationConstraint: {
@@ -65,6 +59,7 @@ const ListFiles = () => {
 	};
 	return (
 		<div className="flex flex-col gap-3">
+			<BreadCrumb />
 			<DndContext
 				autoScroll={false}
 				sensors={sensors}

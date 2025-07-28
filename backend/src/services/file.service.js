@@ -20,6 +20,20 @@ const createFile = async ({ name, size, owner, parent, isFolder = false }) => {
 			parent = owner?.rootFolder;
 		}
 
+		const checkFileExists = await File.findOne({
+			parent,
+			name,
+		});
+
+		console.log(checkFileExists);
+
+		if (checkFileExists) {
+			throw new ApiError(
+				409,
+				`${isFolder ? "Folder" : "File"}  with same name already exists`
+			);
+		}
+
 		const file = await File.create({
 			name,
 			size,
