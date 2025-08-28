@@ -9,6 +9,7 @@ import React, {
 import SingleFileUpload from "./SingleFileUpload";
 import useUploadFile from "../../hooks/useUploadFile";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 const UploadFile = forwardRef((props, ref) => {
 	const fileInputRef = useRef(null);
@@ -16,6 +17,7 @@ const UploadFile = forwardRef((props, ref) => {
 	const [minimize, setMinimize] = useState(false);
 	const [uploads, setUploads] = useState([]);
 
+	const { currentFolderId } = useSelector((state) => state.file);
 	const { mutateAsync: uploadFile } = useUploadFile();
 
 	useImperativeHandle(ref, () => ({
@@ -48,7 +50,7 @@ const UploadFile = forwardRef((props, ref) => {
 				return updated;
 			});
 			await uploadFile(
-				{ file },
+				{ file, parent_id: currentFolderId },
 				{
 					onSuccess: () => {
 						setUploads((prev) => {

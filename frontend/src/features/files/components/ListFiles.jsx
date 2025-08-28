@@ -10,6 +10,8 @@ import Folder from "./Folder";
 import toast from "react-hot-toast";
 import useMoveFile from "../hooks/useMoveFile";
 import BreadCrumb from "./BreadCrumb";
+import GlobalContextMenu from "./ContextMenu/GlobalContextMenu";
+import ContextMenuWrapper from "./ContextMenu/ContextMenuWrapper";
 
 const ListFiles = () => {
 	const { mutateAsync: moveFile } = useMoveFile();
@@ -22,8 +24,8 @@ const ListFiles = () => {
 	const touchSensor = useSensor(TouchSensor, {
 		activationConstraint: {
 			distance: 20,
-			delay: 100,
-			tolerance: 100,
+			delay: 300,
+			tolerance: 5,
 		},
 	});
 
@@ -58,17 +60,20 @@ const ListFiles = () => {
 		);
 	};
 	return (
-		<div className="flex flex-col gap-3">
-			<BreadCrumb />
-			<DndContext
-				autoScroll={false}
-				sensors={sensors}
-				onDragEnd={handleDrag}
-			>
-				<Folder />
-				<Files />
-			</DndContext>
-		</div>
+		<ContextMenuWrapper>
+			<div className="flex min-h-[90vh] flex-col gap-3">
+				<BreadCrumb />
+				<DndContext
+					autoScroll={false}
+					sensors={sensors}
+					onDragEnd={handleDrag}
+				>
+					<Folder />
+					<Files />
+				</DndContext>
+			</div>
+			<GlobalContextMenu />
+		</ContextMenuWrapper>
 	);
 };
 

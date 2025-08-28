@@ -9,6 +9,9 @@ export const getFiles = async (parent) => {
 export const uploadFile = async ({ file, parent_id }) => {
 	const form = new FormData();
 	form.append("file", file);
+	if (parent_id) {
+		form.append("parent_id", parent_id);
+	}
 	const {} = await axiosInstance.post("/files", form, {
 		headers: {
 			"Content-Type": "multipart/form-data",
@@ -22,6 +25,16 @@ export const createFolder = async (payload) => {
 };
 
 export const updateFile = async ({ id, payload }) => {
+	const { data } = await axiosInstance.patch(`/files/${id}`, payload);
+	return data;
+};
+
+export const copyOrMoveFile = async ({ id, payload }) => {
+	const { data } = await axiosInstance.patch(`/files/${id}`, payload);
+	return data;
+};
+
+export const moveToTrash = async ({ id, payload }) => {
 	const { data } = await axiosInstance.patch(`/files/${id}`, payload);
 	return data;
 };

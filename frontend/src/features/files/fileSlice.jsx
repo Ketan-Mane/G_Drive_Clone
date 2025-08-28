@@ -4,6 +4,7 @@ const initialState = {
 	rootFolderId: null,
 	currentFolderId: null,
 	breadcrumb: [],
+	clipboard: null,
 };
 
 const fileSlice = createSlice({
@@ -26,6 +27,12 @@ const fileSlice = createSlice({
 		goToBreadcrumbLevel: (state, action) => {
 			state.breadcrumb = state.breadcrumb.slice(0, action.payload + 1);
 		},
+		setClipboard: (state, action) => {
+			state.clipboard = action.payload;
+		},
+		clearClipboard: (state, action) => {
+			state.clipboard = null;
+		},
 	},
 });
 
@@ -35,5 +42,7 @@ export const {
 	setBreadcrumb,
 	pushToBreadcrumb,
 	goToBreadcrumbLevel,
+	setClipboard,
+	clearClipboard,
 } = fileSlice.actions;
 export default fileSlice.reducer;

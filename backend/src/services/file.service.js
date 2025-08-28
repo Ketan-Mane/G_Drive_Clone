@@ -1,11 +1,15 @@
 import { File } from "../models/file.model.js";
 import ApiError from "../utils/ApiError.js";
 import generateThumbnail from "../utils/generateThumbnail.js";
+import path from "path";
+import fs from "fs";
+import { THUMBNAIL_DIR } from "../constants.js";
 
 const getFiles = async (parentId) => {
 	try {
 		return await File.find({
 			parent: parentId,
+			isTrashed: false,
 		});
 	} catch (error) {
 		throw error;
@@ -24,8 +28,6 @@ const createFile = async ({ name, size, owner, parent, isFolder = false }) => {
 			parent,
 			name,
 		});
-
-		console.log(checkFileExists);
 
 		if (checkFileExists) {
 			throw new ApiError(
@@ -76,9 +78,6 @@ const moveFile = async ({ id, parent }) => {
 	try {
 		const checkFile = await File.findById(id);
 
-		console.log(checkFile);
-		console.log(checkFile?.parent.equals(parent));
-		console.log(parent);
 		if (checkFile?.parent.equals(parent)) {
 			throw new ApiError(
 				400,
@@ -95,8 +94,46 @@ const moveFile = async ({ id, parent }) => {
 	}
 };
 
-const renameFile = async ({ id, name }) => {
+const copyFile = async ({ id, parent }) => {
 	try {
+		const checkFile = await File.findById(id).lean();
+
+		if (checkFile?.parent.equals(parent)) {
+			throw new ApiError(
+				400,
+				"Destination folder should not be same as the parent folder"
+			);
+		}
+
+		delete checkFile?._id;
+		const fileName = checkFile?.thumbnailUrl?.split("/").slice(-1)[0];
+		const oldThumbnailPath = path.join(THUMBNAIL_DIR, fileName);
+		const newFile = await File.create({ ...checkFile, parent });
+
+		const newFileName = `${newFile._id}.png`;
+		const newThumbnailPath = path.join(THUMBNAIL_DIR, newFileName);
+		fs.copyFileSync(oldThumbnailPath, newThumbnailPath);
+
+		newFile.thumbnailUrl = `${process.env.APP_URL}/thumbnail/${newFileName}`;
+
+		await newFile.save();
+		return newFile;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const renameFile = async ({ id, name, parent }) => {
+	try {
+		const checkFileExistsWithName = await File.find({
+			name,
+			parent,
+		});
+
+		if (checkFileExistsWithName?.length > 0) {
+			throw new ApiError(409, "File with same name already exists");
+		}
+
 		const file = await File.findByIdAndUpdate(id, {
 			name,
 		});
@@ -123,6 +160,7 @@ export default {
 	createFile,
 	updateThumbnail,
 	moveFile,
+	copyFile,
 	renameFile,
 	moveToTrash,
 };

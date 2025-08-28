@@ -16,6 +16,7 @@ import {
 	Menu,
 	Plus,
 	Settings,
+	Trash,
 	Users,
 } from "lucide-react";
 import React, { useRef, useState } from "react";
@@ -34,6 +35,11 @@ const menuOptins = [
 		label: "Profile",
 		path: "/profile",
 		icon: <Users size={16} />,
+	},
+	{
+		label: "Bin",
+		path: "/trash",
+		icon: <Trash size={16} />,
 	},
 	{
 		label: "Settings",
@@ -60,13 +66,8 @@ const Sidebar = () => {
 				<div className="p-6 text-xl font-bold">My Dashboard</div>
 				<nav className="flex h-full w-full flex-col gap-2 p-4">
 					<DropdownMenu>
-						<DropdownMenuTrigger>
-							<Button
-								variant="outline"
-								className={"w-full cursor-pointer"}
-							>
-								New <Plus />
-							</Button>
+						<DropdownMenuTrigger className="flex h-10 items-center justify-center rounded-md border">
+							New <Plus size={18} className="ml-1" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent className="w-56" align="start">
 							<DropdownMenuItem

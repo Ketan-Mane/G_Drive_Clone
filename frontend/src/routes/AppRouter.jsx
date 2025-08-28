@@ -8,6 +8,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import DashboardLayout from "@/layout/DashboardLayout";
 import HomePage from "@/pages/HomePage";
 import App from "@/App";
+import TrashFiles from "@/pages/TrashFiles";
 
 const AppRouter = createBrowserRouter(
 	createRoutesFromElements(
@@ -17,10 +18,11 @@ const AppRouter = createBrowserRouter(
 			<Route element={<ProtectedRoute />}>
 				<Route element={<DashboardLayout />}>
 					<Route index element={<HomePage />} />
+					<Route path="/trash" element={<TrashFiles />} />
 				</Route>
 			</Route>
-		</Route>
-	)
+		</Route>,
+	),
 );
 
 export default AppRouter;

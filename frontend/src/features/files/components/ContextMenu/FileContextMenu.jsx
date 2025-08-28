@@ -1,0 +1,86 @@
+import {
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuSeparator,
+} from "@/components/ui/context-menu";
+import {
+	Files,
+	FolderInput,
+	Info,
+	SquarePen,
+	Trash,
+	UserPlus,
+} from "lucide-react";
+import useMoveToTrash from "../../hooks/useMoveToTrash";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setClipboard } from "../../fileSlice";
+
+const FileContextMenu = ({ file }) => {
+	const dispatch = useDispatch();
+
+	const { mutateAsync: moveToTrash } = useMoveToTrash();
+	const handleMoveToTrash = async () => {
+		const toast_id = toast.loading("Deleting file");
+		await moveToTrash(
+			{
+				id: file?._id,
+				payload: { action: "moveToTrash" },
+			},
+			{
+				onSuccess: (data) => {
+					const { file } = data?.data;
+					toast.success(file?.name + " moved to trash", {
+						id: toast_id,
+					});
+				},
+				onError: (error) => {
+					console.log(error);
+					if (error?.response) {
+					}
+					toast.error("Failed to delete file", { id: toast_id });
+				},
+			},
+		);
+	};
+
+	return (
+		<>
+			<ContextMenuContent className="max-w-52">
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(setClipboard({ file, action: "move" }))
+					}
+				>
+					<FolderInput /> Move
+				</ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(setClipboard({ file, action: "copy" }))
+					}
+				>
+					<Files /> Copy
+				</ContextMenuItem>
+				<ContextMenuItem>
+					<SquarePen /> Rename
+				</ContextMenuItem>
+				<ContextMenuSeparator />
+				<ContextMenuItem>
+					<UserPlus /> Share
+				</ContextMenuItem>
+				<ContextMenuItem>
+					<Info /> File Information
+				</ContextMenuItem>
+				<ContextMenuSeparator />
+				<ContextMenuItem
+					variant="destructive"
+					onClick={handleMoveToTrash}
+				>
+					<Trash /> Delete
+				</ContextMenuItem>
+			</ContextMenuContent>
+		</>
+	);
+};
+
+export default FileContextMenu;

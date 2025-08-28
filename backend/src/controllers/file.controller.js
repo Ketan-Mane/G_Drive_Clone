@@ -47,11 +47,20 @@ const createFolder = asyncHandler(async (req, res) => {
 
 const updateFile = asyncHandler(async (req, res) => {
 	const { id } = req.params;
-	const { parent, action } = req.body;
+	const { parent, action, name } = req.body;
 	let file;
 	switch (action) {
 		case "move":
 			file = await fileService.moveFile({ id, parent });
+			break;
+		case "copy":
+			file = await fileService.copyFile({ id, parent });
+			break;
+		case "moveToTrash":
+			file = await fileService.moveToTrash({ id });
+			break;
+		case "renameFile":
+			file = await fileService.renameFile({ id, name, parent });
 			break;
 		default:
 			return res
