@@ -7,6 +7,9 @@ const router = Router();
 
 router.route("/:parent").get(authMiddleware, fileController.getFiles);
 router
+	.route("/:parent/trash")
+	.get(authMiddleware, fileController.getTrashedFiles);
+router
 	.route("/")
 	.post(authMiddleware, upload.single("file"), fileController.createFile);
 

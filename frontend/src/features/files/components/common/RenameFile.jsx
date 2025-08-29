@@ -18,7 +18,6 @@ const RenameFile = ({ file }) => {
 	});
 
 	const { mutateAsync: renameFile, isPending } = useFileOperation();
-
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (form.getValues("name") === file?.name) {

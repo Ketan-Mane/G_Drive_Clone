@@ -8,6 +8,7 @@ const useFileOperation = () => {
 		mutationFn: copyOrMoveFile,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["files"] });
+			queryClient.invalidateQueries({ queryKey: ["trashFiles"] });
 		},
 	});
 };

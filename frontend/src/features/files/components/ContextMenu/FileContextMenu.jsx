@@ -15,6 +15,7 @@ import useMoveToTrash from "../../hooks/useMoveToTrash";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setClipboard } from "../../fileSlice";
+import { openModal } from "@/store/modal/modalSlice";
 
 const FileContextMenu = ({ file }) => {
 	const dispatch = useDispatch();
@@ -37,6 +38,7 @@ const FileContextMenu = ({ file }) => {
 				onError: (error) => {
 					console.log(error);
 					if (error?.response) {
+						toast.error("Failed to delete file", { id: toast_id });
 					}
 					toast.error("Failed to delete file", { id: toast_id });
 				},
@@ -61,7 +63,17 @@ const FileContextMenu = ({ file }) => {
 				>
 					<Files /> Copy
 				</ContextMenuItem>
-				<ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(
+							openModal({
+								modalType: "renameFile",
+								modalProps: { file },
+								title: "Rename File",
+							}),
+						)
+					}
+				>
 					<SquarePen /> Rename
 				</ContextMenuItem>
 				<ContextMenuSeparator />

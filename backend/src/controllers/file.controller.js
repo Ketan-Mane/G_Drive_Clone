@@ -4,7 +4,13 @@ import ApiResponse from "../utils/ApiResponse.js";
 
 const getFiles = asyncHandler(async (req, res) => {
 	const { parent } = req.params;
-	const files = await fileService.getFiles(parent);
+	const files = await fileService.getFiles({ parent });
+	return res.status(200).json(new ApiResponse(200, { files }));
+});
+
+const getTrashedFiles = asyncHandler(async (req, res) => {
+	const { parent } = req.params;
+	const files = await fileService.getFiles({ parent, isTrashed: true });
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
@@ -59,6 +65,9 @@ const updateFile = asyncHandler(async (req, res) => {
 		case "moveToTrash":
 			file = await fileService.moveToTrash({ id });
 			break;
+		case "restore":
+			file = await fileService.restoreTrash({ id });
+			break;
 		case "renameFile":
 			file = await fileService.renameFile({ id, name, parent });
 			break;
@@ -70,4 +79,10 @@ const updateFile = asyncHandler(async (req, res) => {
 
 	return res.status(200).json(new ApiResponse(200, { file }, "Success"));
 });
-export default { getFiles, createFile, createFolder, updateFile };
+export default {
+	getFiles,
+	getTrashedFiles,
+	createFile,
+	createFolder,
+	updateFile,
+};

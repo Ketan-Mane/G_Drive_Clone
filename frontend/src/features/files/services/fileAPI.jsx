@@ -6,6 +6,12 @@ export const getFiles = async (parent) => {
 	return files;
 };
 
+export const getTrashedFiles = async (parent) => {
+	const { data } = await axiosInstance.get(`/files/${parent}/trash`);
+	const { files } = data.data;
+	return files;
+};
+
 export const uploadFile = async ({ file, parent_id }) => {
 	const form = new FormData();
 	form.append("file", file);

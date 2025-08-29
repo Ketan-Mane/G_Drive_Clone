@@ -5,11 +5,11 @@ import path from "path";
 import fs from "fs";
 import { THUMBNAIL_DIR } from "../constants.js";
 
-const getFiles = async (parentId) => {
+const getFiles = async ({ parent, isTrashed = false }) => {
 	try {
 		return await File.find({
-			parent: parentId,
-			isTrashed: false,
+			parent,
+			isTrashed,
 		});
 	} catch (error) {
 		throw error;
@@ -155,6 +155,18 @@ const moveToTrash = async ({ id, parent }) => {
 		throw error;
 	}
 };
+
+const restoreTrash = async ({ id }) => {
+	try {
+		const file = await File.findByIdAndUpdate(id, {
+			isTrashed: false,
+		});
+
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
 export default {
 	getFiles,
 	createFile,
@@ -163,4 +175,5 @@ export default {
 	copyFile,
 	renameFile,
 	moveToTrash,
+	restoreTrash,
 };

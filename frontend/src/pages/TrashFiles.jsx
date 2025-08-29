@@ -1,7 +1,8 @@
+import ListTrashFiles from "@/features/files/components/ListTrashFiles";
 import React from "react";
 
 const TrashFiles = () => {
-	return <div>TrashFiles</div>;
+	return <ListTrashFiles />;
 };
 
 export default TrashFiles;

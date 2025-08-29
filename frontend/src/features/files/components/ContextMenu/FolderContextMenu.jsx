@@ -13,9 +13,36 @@ import {
 	UserPlus,
 } from "lucide-react";
 import { useDispatch } from "react-redux";
+import useMoveToTrash from "../../hooks/useMoveToTrash";
+import toast from "react-hot-toast";
 
 const FolderContextMenu = ({ folder }) => {
 	const dispatch = useDispatch();
+
+	const { mutateAsync: moveToTrash } = useMoveToTrash();
+	const handleMoveToTrash = async () => {
+		const toast_id = toast.loading("Deleting file");
+		await moveToTrash(
+			{
+				id: folder?._id,
+				payload: { action: "moveToTrash" },
+			},
+			{
+				onSuccess: (data) => {
+					const { file } = data?.data;
+					toast.success(file?.name + " moved to trash", {
+						id: toast_id,
+					});
+				},
+				onError: (error) => {
+					console.log(error);
+					if (error?.response) {
+					}
+					toast.error("Failed to delete file", { id: toast_id });
+				},
+			},
+		);
+	};
 
 	return (
 		<>
@@ -44,7 +71,10 @@ const FolderContextMenu = ({ folder }) => {
 					<Info /> Folder Information
 				</ContextMenuItem>
 				<ContextMenuSeparator />
-				<ContextMenuItem>
+				<ContextMenuItem
+					variant="destructive"
+					onClick={handleMoveToTrash}
+				>
 					<Trash /> Delete
 				</ContextMenuItem>
 			</ContextMenuContent>
