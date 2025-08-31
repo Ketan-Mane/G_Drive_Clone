@@ -3,6 +3,7 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import ContextMenuWrapper from "../ContextMenu/ContextMenuWrapper";
 import FileContextMenu from "../ContextMenu/FileContextMenu";
+import { Link } from "react-router-dom";
 
 const SingleFile = ({ file }) => {
 	const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -24,11 +25,13 @@ const SingleFile = ({ file }) => {
 				style={style}
 				className="flex flex-col gap-2 rounded-md border bg-white p-2 transition-colors duration-300 hover:bg-gray-100"
 			>
-				<img
-					src={file?.thumbnailUrl}
-					alt={file?.name}
-					className="h-40 w-full rounded object-cover object-top"
-				/>
+				<Link target="_blank" to={file?.previewUrl}>
+					<img
+						src={file?.thumbnailUrl}
+						alt={file?.name}
+						className="h-40 w-full rounded object-cover object-top"
+					/>
+				</Link>
 				<p className="truncate font-semibold">{file.name}</p>
 				<div className="flex justify-between text-xs text-nowrap">
 					<span>

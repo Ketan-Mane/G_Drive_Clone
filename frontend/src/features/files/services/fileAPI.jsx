@@ -44,3 +44,8 @@ export const moveToTrash = async ({ id, payload }) => {
 	const { data } = await axiosInstance.patch(`/files/${id}`, payload);
 	return data;
 };
+
+export const deleteFile = async ({ id }) => {
+	const { data } = await axiosInstance.delete(`/files/${id}`);
+	return data;
+};

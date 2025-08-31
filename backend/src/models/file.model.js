@@ -14,14 +14,9 @@ const fileSchema = new Schema(
 		size: { type: Number, required: [true, "File size is required"] },
 		thumbnailUrl: { type: String },
 		parent: { type: Schema.Types.ObjectId, ref: "File", default: null },
-		downloadUrl: {
-			type: String,
-			required: [true, "Download url is required"],
-		},
-		previewUrl: {
-			type: String,
-			required: [true, "Preview url is required"],
-		},
+		downloadUrl: { type: String },
+		previewUrl: { type: String },
+		contentPath: { type: String },
 		hasFolders: { type: Boolean, default: false },
 		breadcrumb: { type: String, default: null },
 	},

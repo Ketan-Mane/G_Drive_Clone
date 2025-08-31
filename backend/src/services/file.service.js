@@ -7,33 +7,41 @@ import { THUMBNAIL_DIR } from "../constants.js";
 
 const getFiles = async ({ parent, isTrashed = false }) => {
 	try {
-		return await File.find({
-			parent,
-			isTrashed,
-		});
+		return await File.find(
+			{
+				parent,
+				isTrashed,
+			},
+			{
+				contentPath: false,
+				__v: false,
+			}
+		);
 	} catch (error) {
 		throw error;
 	}
 };
 
-const createFile = async ({ name, size, owner, parent, isFolder = false }) => {
+const getFileById = async ({ id }) => {
 	try {
-		const downloadUrl = `${process.env.APP_URL}/api/files/download/`;
-		const previewUrl = `${process.env.APP_URL}/api/files/preview/`;
+		const file = await File.findById(id);
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const createFile = async ({
+	name,
+	size,
+	owner,
+	parent,
+	isFolder = false,
+	contentPath,
+}) => {
+	try {
 		if (!parent) {
 			parent = owner?.rootFolder;
-		}
-
-		const checkFileExists = await File.findOne({
-			parent,
-			name,
-		});
-
-		if (checkFileExists) {
-			throw new ApiError(
-				409,
-				`${isFolder ? "Folder" : "File"}  with same name already exists`
-			);
 		}
 
 		const file = await File.create({
@@ -42,8 +50,7 @@ const createFile = async ({ name, size, owner, parent, isFolder = false }) => {
 			owner,
 			parent,
 			isFolder,
-			downloadUrl,
-			previewUrl,
+			contentPath,
 		});
 
 		return file;
@@ -64,9 +71,14 @@ const createFile = async ({ name, size, owner, parent, isFolder = false }) => {
 
 const updateThumbnail = async ({ id, file }) => {
 	try {
+		const downloadUrl = `${process.env.APP_URL}/api/files/download/${id}`;
+		const previewUrl = `${process.env.APP_URL}/api/files/preview/${id}`;
+
 		const thumbnailUrl = await generateThumbnail(id, file.path);
 		const updatedFile = await File.findByIdAndUpdate(id, {
 			thumbnailUrl,
+			downloadUrl,
+			previewUrl,
 		});
 		return updatedFile;
 	} catch (error) {
@@ -167,8 +179,26 @@ const restoreTrash = async ({ id }) => {
 		throw error;
 	}
 };
+
+const deleteFile = async ({ id }) => {
+	try {
+		const file = await File.findByIdAndDelete(id);
+		const thumbnailPath = path.join(THUMBNAIL_DIR, `${file?._id}.png`);
+		const filePath = path.join(file?.contentPath);
+		if (fs.existsSync(thumbnailPath)) {
+			fs.unlinkSync(thumbnailPath);
+		}
+		if (fs.existsSync(filePath)) {
+			fs.unlinkSync(filePath);
+		}
+	} catch (error) {
+		throw error;
+	}
+};
+
 export default {
 	getFiles,
+	getFileById,
 	createFile,
 	updateThumbnail,
 	moveFile,
@@ -176,4 +206,5 @@ export default {
 	renameFile,
 	moveToTrash,
 	restoreTrash,
+	deleteFile,
 };

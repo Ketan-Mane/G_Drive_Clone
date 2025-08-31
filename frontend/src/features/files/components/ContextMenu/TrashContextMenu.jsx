@@ -8,9 +8,11 @@ import { MdRestore } from "react-icons/md";
 import useFileOperation from "../../hooks/useFileOperation";
 import toast from "react-hot-toast";
 import DeleteModal from "@/components/common/DeleteModal";
+import useDeleteFile from "../../hooks/useDeleteFIle";
 
 const TrashContextMenu = ({ file }) => {
 	const { mutateAsync: fileOperation, isPending } = useFileOperation();
+	const { mutateAsync: deleteFile, isPending: isDeleting } = useDeleteFile();
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 	const handleRestore = async () => {
@@ -38,8 +40,25 @@ const TrashContextMenu = ({ file }) => {
 		);
 	};
 
-	const handleDelete = () => {
-		console.log("Deleting File");
+	const handleDelete = async () => {
+		await deleteFile(
+			{ id: file?._id },
+			{
+				onSuccess: (data) => {
+					toast.success("File deleted successfully");
+				},
+				onError: (error) => {
+					if (error?.response) {
+						toast.error(
+							error?.response?.data?.message ||
+								"Failed to delete file",
+						);
+						return;
+					}
+					toast.error(error?.message || "Failed to delete file");
+				},
+			},
+		);
 	};
 
 	return (

@@ -1,6 +1,8 @@
 import fileService from "../services/file.service.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
+import path from "path";
+import fs from "fs";
 
 const getFiles = asyncHandler(async (req, res) => {
 	const { parent } = req.params;
@@ -14,6 +16,16 @@ const getTrashedFiles = asyncHandler(async (req, res) => {
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
+const previewFile = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	const file = await fileService.getFileById({ id });
+	const filePath = path.join(file?.contentPath);
+	const readStream = fs.createReadStream(filePath);
+
+	res.setHeader("Content-Disposition", `inline; filename="${file.name}"`);
+	readStream.pipe(res);
+});
+
 const createFile = asyncHandler(async (req, res) => {
 	const uploadedFile = req.file;
 	const user = req.user;
@@ -24,6 +36,7 @@ const createFile = asyncHandler(async (req, res) => {
 		size: uploadedFile.size,
 		owner: user,
 		parent,
+		contentPath: uploadedFile?.path,
 	});
 
 	const file = await fileService.updateThumbnail({
@@ -79,10 +92,21 @@ const updateFile = asyncHandler(async (req, res) => {
 
 	return res.status(200).json(new ApiResponse(200, { file }, "Success"));
 });
+
+const deleteFile = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	await fileService.deleteFile({ id });
+	return res
+		.status(200)
+		.json(new ApiResponse(200, null, "File deleted successfully."));
+});
+
 export default {
 	getFiles,
 	getTrashedFiles,
+	previewFile,
 	createFile,
 	createFolder,
 	updateFile,
+	deleteFile,
 };

@@ -9,11 +9,16 @@ router.route("/:parent").get(authMiddleware, fileController.getFiles);
 router
 	.route("/:parent/trash")
 	.get(authMiddleware, fileController.getTrashedFiles);
+
+router.route("/download/:id").get(authMiddleware, fileController.getFiles);
+router.route("/preview/:id").get(authMiddleware, fileController.previewFile);
+
 router
 	.route("/")
 	.post(authMiddleware, upload.single("file"), fileController.createFile);
 
 router.route("/folder").post(authMiddleware, fileController.createFolder);
 router.route("/:id").patch(authMiddleware, fileController.updateFile);
+router.route("/:id").delete(authMiddleware, fileController.deleteFile);
 
 export default router;

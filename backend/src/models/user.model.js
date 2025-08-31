@@ -66,7 +66,7 @@ userSchema.methods.generateAccessToken = async function () {
 		},
 		process.env.JWT_SECRET,
 		{
-			expiresIn: "1hr",
+			expiresIn: "1d",
 		}
 	);
 };
