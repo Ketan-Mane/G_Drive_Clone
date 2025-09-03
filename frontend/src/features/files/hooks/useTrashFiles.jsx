@@ -6,7 +6,7 @@ const useTrashFiles = () => {
 	const { rootFolderId } = useSelector((state) => state.file);
 	return useQuery({
 		queryKey: ["trashFiles", rootFolderId],
-		queryFn: () => getTrashedFiles(rootFolderId),
+		queryFn: getTrashedFiles,
 		refetchOnWindowFocus: false,
 		enabled: Boolean(rootFolderId),
 	});

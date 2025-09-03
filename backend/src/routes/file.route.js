@@ -5,10 +5,10 @@ import fileController from "../controllers/file.controller.js";
 
 const router = Router();
 
-router.route("/:parent").get(authMiddleware, fileController.getFiles);
-router
-	.route("/:parent/trash")
-	.get(authMiddleware, fileController.getTrashedFiles);
+router.route("/folders/:id").get(authMiddleware, fileController.getFiles);
+router.route("/trash").get(authMiddleware, fileController.getTrashedFiles);
+
+router.route("/:id").get(authMiddleware, fileController.getFile);
 
 router.route("/download/:id").get(authMiddleware, fileController.getFiles);
 router.route("/preview/:id").get(authMiddleware, fileController.previewFile);

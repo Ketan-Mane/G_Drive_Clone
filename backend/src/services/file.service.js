@@ -22,9 +22,22 @@ const getFiles = async ({ parent, isTrashed = false }) => {
 	}
 };
 
-const getFileById = async ({ id }) => {
+const getFileById = async ({ id, excludePath = true }) => {
 	try {
-		const file = await File.findById(id);
+		const projection = { __v: 0 }; // always exclude __v
+
+		if (excludePath) {
+			projection.contentPath = 0; // exclude contentPath
+		}
+		const file = await File.findById(id, projection)
+			.populate({
+				path: "parent",
+				select: "name isFolder owner",
+			})
+			.populate({
+				path: "owner",
+				select: "firstName lastName email username",
+			});
 		return file;
 	} catch (error) {
 		throw error;
@@ -38,6 +51,7 @@ const createFile = async ({
 	parent,
 	isFolder = false,
 	contentPath,
+	type,
 }) => {
 	try {
 		if (!parent) {
@@ -51,6 +65,7 @@ const createFile = async ({
 			parent,
 			isFolder,
 			contentPath,
+			type,
 		});
 
 		return file;

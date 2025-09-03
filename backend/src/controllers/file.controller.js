@@ -3,22 +3,36 @@ import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import path from "path";
 import fs from "fs";
+import ApiError from "../utils/ApiError.js";
 
 const getFiles = asyncHandler(async (req, res) => {
-	const { parent } = req.params;
-	const files = await fileService.getFiles({ parent });
+	const { id } = req.params;
+	const files = await fileService.getFiles({ parent: id });
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
 const getTrashedFiles = asyncHandler(async (req, res) => {
-	const { parent } = req.params;
-	const files = await fileService.getFiles({ parent, isTrashed: true });
+	const user = req.user;
+	const files = await fileService.getFiles({
+		parent: user?.rootFolder.toString(),
+		isTrashed: true,
+	});
 	return res.status(200).json(new ApiResponse(200, { files }));
+});
+
+const getFile = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	const file = await fileService.getFileById({ id });
+	if (!file) {
+		throw new ApiError(404, "File not found");
+	}
+
+	return res.status(200).json(new ApiResponse(200, { file }));
 });
 
 const previewFile = asyncHandler(async (req, res) => {
 	const { id } = req.params;
-	const file = await fileService.getFileById({ id });
+	const file = await fileService.getFileById({ id, excludePath: false });
 	const filePath = path.join(file?.contentPath);
 	const readStream = fs.createReadStream(filePath);
 
@@ -37,6 +51,7 @@ const createFile = asyncHandler(async (req, res) => {
 		owner: user,
 		parent,
 		contentPath: uploadedFile?.path,
+		type: uploadedFile?.mimetype,
 	});
 
 	const file = await fileService.updateThumbnail({
@@ -104,6 +119,7 @@ const deleteFile = asyncHandler(async (req, res) => {
 export default {
 	getFiles,
 	getTrashedFiles,
+	getFile,
 	previewFile,
 	createFile,
 	createFolder,

@@ -80,7 +80,17 @@ const FileContextMenu = ({ file }) => {
 				<ContextMenuItem>
 					<UserPlus /> Share
 				</ContextMenuItem>
-				<ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(
+							openModal({
+								modalType: "fileDetails",
+								modalProps: { id: file?._id },
+								title: file?.name,
+							}),
+						)
+					}
+				>
 					<Info /> File Information
 				</ContextMenuItem>
 				<ContextMenuSeparator />

@@ -8,6 +8,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import RenameFile from "@/features/files/components/common/RenameFile";
+import FileDetails from "@/features/files/components/File/FileDetails";
 import NewFolder from "@/features/files/components/Folder/NewFolder";
 import { closeModal } from "@/store/modal/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -58,6 +59,8 @@ const RenderFormModal = ({ modalType, modalProps }) => {
 			return <NewFolder {...modalProps} />;
 		case "renameFile":
 			return <RenameFile {...modalProps} />;
+		case "fileDetails":
+			return <FileDetails {...modalProps} />;
 		default:
 			return <>Form Not Found</>;
 	}

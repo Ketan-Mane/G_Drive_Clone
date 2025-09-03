@@ -67,7 +67,17 @@ const FolderContextMenu = ({ folder }) => {
 				<ContextMenuItem>
 					<UserPlus /> Share
 				</ContextMenuItem>
-				<ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(
+							openModal({
+								modalType: "fileDetails",
+								modalProps: { id: folder?._id },
+								title: folder?.name,
+							}),
+						)
+					}
+				>
 					<Info /> Folder Information
 				</ContextMenuItem>
 				<ContextMenuSeparator />

@@ -16,3 +16,30 @@ export function formatBytes(bytes, decimals = 2) {
 
 	return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export const getFileCategory = (mimeType) => {
+	if (!mimeType) return "unknown";
+
+	if (mimeType.startsWith("image/")) return "Image";
+	if (mimeType === "application/pdf") return "PDF";
+	if (mimeType.startsWith("video/")) return "Video";
+	if (mimeType.startsWith("audio/")) return "Audio";
+
+	if (
+		mimeType === "application/msword" ||
+		mimeType ===
+			"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+	) {
+		return "Word";
+	}
+
+	if (
+		mimeType === "application/vnd.ms-excel" ||
+		mimeType ===
+			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	) {
+		return "Excel";
+	}
+
+	return "Other";
+};

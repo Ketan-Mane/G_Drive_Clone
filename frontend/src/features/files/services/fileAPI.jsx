@@ -1,15 +1,21 @@
 import axiosInstance from "@/services/apiClient";
 
-export const getFiles = async (parent) => {
-	const { data } = await axiosInstance.get(`/files/${parent}`);
+export const getFiles = async (folder) => {
+	const { data } = await axiosInstance.get(`/files/folders/${folder}`);
 	const { files } = data.data;
 	return files;
 };
 
-export const getTrashedFiles = async (parent) => {
-	const { data } = await axiosInstance.get(`/files/${parent}/trash`);
+export const getTrashedFiles = async () => {
+	const { data } = await axiosInstance.get("/files/trash");
 	const { files } = data.data;
 	return files;
+};
+
+export const getFile = async (id) => {
+	const { data } = await axiosInstance.get(`/files/${id}`);
+	const { file } = data?.data;
+	return file;
 };
 
 export const uploadFile = async ({ file, parent_id }) => {

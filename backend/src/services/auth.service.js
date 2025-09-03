@@ -55,7 +55,7 @@ const registerUser = async ({
 		});
 
 		const rootFolder = await fileService.createFile({
-			name: newUser?._id,
+			name: "My Folder",
 			owner_id: newUser._id,
 			isFolder: true,
 			size: 0,

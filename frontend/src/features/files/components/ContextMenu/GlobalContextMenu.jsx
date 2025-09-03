@@ -7,9 +7,12 @@ import { openModal } from "@/store/modal/modalSlice";
 import { ClipboardPaste, FileUp, FolderPlus, Trash } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import useFileOperation from "../../hooks/useFileOperation";
+import UploadFile from "../File/UploadFile";
+import { useRef } from "react";
 
 const GlobalContextMenu = () => {
 	const dispatch = useDispatch();
+	const uploadRef = useRef();
 
 	const { mutateAsync: fileOperation } = useFileOperation();
 
@@ -29,6 +32,10 @@ const GlobalContextMenu = () => {
 				},
 			},
 		);
+	};
+
+	const handleFileUploadClick = () => {
+		uploadRef.current?.openFileDialog();
 	};
 
 	return (
@@ -51,7 +58,7 @@ const GlobalContextMenu = () => {
 				>
 					<FolderPlus /> New Folder
 				</ContextMenuItem>
-				<ContextMenuItem>
+				<ContextMenuItem onClick={handleFileUploadClick}>
 					<FileUp /> File Upload
 				</ContextMenuItem>
 				<ContextMenuSeparator />
@@ -59,6 +66,7 @@ const GlobalContextMenu = () => {
 					<Trash /> Go to Trash
 				</ContextMenuItem>
 			</ContextMenuContent>
+			<UploadFile ref={uploadRef} />
 		</>
 	);
 };
