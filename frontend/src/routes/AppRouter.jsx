@@ -1,14 +1,11 @@
-import {
-	createBrowserRouter,
-	createRoutesFromElements,
-	Route,
-} from "react-router-dom";
+import { createBrowserRouter, createRoutesFromElements, Route } from "react-router-dom";
 import { Login, Register } from "@/features/auth/components";
 import ProtectedRoute from "./ProtectedRoute";
 import DashboardLayout from "@/layout/DashboardLayout";
 import HomePage from "@/pages/HomePage";
 import App from "@/App";
 import TrashFiles from "@/pages/TrashFiles";
+import SharedWithMePage from "@/pages/SharedWithMePage";
 
 const AppRouter = createBrowserRouter(
 	createRoutesFromElements(
@@ -19,6 +16,7 @@ const AppRouter = createBrowserRouter(
 				<Route element={<DashboardLayout />}>
 					<Route index element={<HomePage />} />
 					<Route path="/trash" element={<TrashFiles />} />
+					<Route path="/shared-with-me" element={<SharedWithMePage />} />
 				</Route>
 			</Route>
 		</Route>,

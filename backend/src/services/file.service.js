@@ -4,6 +4,7 @@ import generateThumbnail from "../utils/generateThumbnail.js";
 import path from "path";
 import fs from "fs";
 import { THUMBNAIL_DIR } from "../constants.js";
+import userService from "./user.service.js";
 
 const getFiles = async ({ parent, isTrashed = false }) => {
 	try {
@@ -12,6 +13,20 @@ const getFiles = async ({ parent, isTrashed = false }) => {
 				parent,
 				isTrashed,
 			},
+			{
+				contentPath: false,
+				__v: false,
+			}
+		);
+	} catch (error) {
+		throw error;
+	}
+};
+
+const getSharedWithMeFiles = async ({ user }) => {
+	try {
+		return await File.find(
+			{ sharedWith: user },
 			{
 				contentPath: false,
 				__v: false,
@@ -37,6 +52,10 @@ const getFileById = async ({ id, excludePath = true }) => {
 			.populate({
 				path: "owner",
 				select: "firstName lastName email username",
+			})
+			.populate({
+				path: "sharedWith",
+				select: "firstName lastName email",
 			});
 		return file;
 	} catch (error) {
@@ -44,15 +63,7 @@ const getFileById = async ({ id, excludePath = true }) => {
 	}
 };
 
-const createFile = async ({
-	name,
-	size,
-	owner,
-	parent,
-	isFolder = false,
-	contentPath,
-	type,
-}) => {
+const createFile = async ({ name, size, owner, parent, isFolder = false, contentPath, type }) => {
 	try {
 		if (!parent) {
 			parent = owner?.rootFolder;
@@ -71,14 +82,7 @@ const createFile = async ({
 		return file;
 	} catch (error) {
 		if (error.code === 11000) {
-			throw new ApiError(
-				409,
-				`${
-					isFolder ? "Folder" : "File"
-				}  with same name already exists`,
-				null,
-				null
-			);
+			throw new ApiError(409, `${isFolder ? "Folder" : "File"}  with same name already exists`, null, null);
 		}
 		throw error;
 	}
@@ -106,10 +110,7 @@ const moveFile = async ({ id, parent }) => {
 		const checkFile = await File.findById(id);
 
 		if (checkFile?.parent.equals(parent)) {
-			throw new ApiError(
-				400,
-				"Destination folder should not be same as the parent folder"
-			);
+			throw new ApiError(400, "Destination folder should not be same as the parent folder");
 		}
 		const file = await File.findByIdAndUpdate(id, {
 			parent,
@@ -126,10 +127,7 @@ const copyFile = async ({ id, parent }) => {
 		const checkFile = await File.findById(id).lean();
 
 		if (checkFile?.parent.equals(parent)) {
-			throw new ApiError(
-				400,
-				"Destination folder should not be same as the parent folder"
-			);
+			throw new ApiError(400, "Destination folder should not be same as the parent folder");
 		}
 
 		delete checkFile?._id;
@@ -171,8 +169,13 @@ const renameFile = async ({ id, name, parent }) => {
 	}
 };
 
-const moveToTrash = async ({ id, parent }) => {
+const moveToTrash = async ({ id, user, parent }) => {
 	try {
+		const checkPermission = await File.findById(id);
+		if (!checkPermission?.owner.equals(user?._id)) {
+			return await removeFileAccess({ user: user?._id, id });
+		}
+
 		const file = await File.findByIdAndUpdate(id, {
 			isTrashed: true,
 		});
@@ -211,8 +214,33 @@ const deleteFile = async ({ id }) => {
 	}
 };
 
+const shareFile = async ({ email, id }) => {
+	try {
+		const user = await userService.getUserByEmailOrUsername(email);
+		const file = await File.findByIdAndUpdate(id, {
+			$addToSet: { sharedWith: user },
+		});
+
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const removeFileAccess = async ({ user, id }) => {
+	try {
+		const file = await File.findByIdAndUpdate(id, {
+			$pull: { sharedWith: user },
+		});
+		return file;
+	} catch (error) {
+		throw error;
+	}
+};
+
 export default {
 	getFiles,
+	getSharedWithMeFiles,
 	getFileById,
 	createFile,
 	updateThumbnail,
@@ -222,4 +250,6 @@ export default {
 	moveToTrash,
 	restoreTrash,
 	deleteFile,
+	shareFile,
+	removeFileAccess,
 };

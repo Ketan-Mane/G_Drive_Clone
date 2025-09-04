@@ -10,4 +10,17 @@ const getUserById = async (id) => {
 	return user;
 };
 
-export default { getUserById };
+const getUserByEmailOrUsername = async (identifier) => {
+  try {
+    return await User.findOne({
+      $or: [
+        { email: identifier },
+        { username: identifier }
+      ]
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export default { getUserById, getUserByEmailOrUsername };

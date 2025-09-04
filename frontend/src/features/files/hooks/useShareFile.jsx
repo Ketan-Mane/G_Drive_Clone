@@ -1,15 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { moveToTrash } from "../services/fileAPI";
+import React from "react";
+import { shareFile } from "../services/fileAPI";
 
-const useMoveToTrash = () => {
+const useShareFile = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: moveToTrash,
+		mutationFn: shareFile,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["files"] });
-			queryClient.invalidateQueries({ queryKey: ["sharedWithMe"] });
+			queryClient.invalidateQueries({ queryKey: ["file"] });
 		},
 	});
 };
 
-export default useMoveToTrash;
+export default useShareFile;

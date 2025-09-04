@@ -9,7 +9,7 @@ const generateThumbnail = async (fileId, filePath) => {
 		const options = {
 			width: 200,
 			height: 200,
-			quality: 90,
+			quality: 100,
 			pdf: true,
 			keepAspect: true,
 			page: 1,

@@ -8,17 +8,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import clsx from "clsx";
-import {
-	FileUp,
-	FolderPlus,
-	Home,
-	LogOut,
-	Menu,
-	Plus,
-	Settings,
-	Trash,
-	Users,
-} from "lucide-react";
+import { FileUp, FolderPlus, Home, LogOut, Menu, Plus, Settings, Trash, UserPlus, Users } from "lucide-react";
 import React, { useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
@@ -30,6 +20,11 @@ const menuOptins = [
 		label: "Home",
 		path: "/",
 		icon: <Home size={16} />,
+	},
+	{
+		label: "Shared with me",
+		path: "/shared-with-me",
+		icon: <UserPlus size={16} />,
 	},
 	{
 		label: "Profile",
@@ -89,19 +84,10 @@ const Sidebar = () => {
 						</DropdownMenuContent>
 					</DropdownMenu>
 					{menuOptins.map((menu, index) => (
-						<NavItem
-							key={index}
-							icon={menu.icon}
-							label={menu.label}
-							to={menu.path}
-						/>
+						<NavItem key={index} icon={menu.icon} label={menu.label} to={menu.path} />
 					))}
 
-					<Button
-						onClick={handleLogout}
-						variant={"destructive"}
-						className={"cursor-pointer"}
-					>
+					<Button onClick={handleLogout} variant={"destructive"} className={"cursor-pointer"}>
 						<LogOut size={16} /> Logout
 					</Button>
 				</nav>

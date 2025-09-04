@@ -1,16 +1,5 @@
-import {
-	ContextMenuContent,
-	ContextMenuItem,
-	ContextMenuSeparator,
-} from "@/components/ui/context-menu";
-import {
-	Files,
-	FolderInput,
-	Info,
-	SquarePen,
-	Trash,
-	UserPlus,
-} from "lucide-react";
+import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
+import { Files, FolderInput, Info, SquarePen, Trash, UserPlus } from "lucide-react";
 import useMoveToTrash from "../../hooks/useMoveToTrash";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -49,18 +38,10 @@ const FileContextMenu = ({ file }) => {
 	return (
 		<>
 			<ContextMenuContent className="max-w-52">
-				<ContextMenuItem
-					onClick={() =>
-						dispatch(setClipboard({ file, action: "move" }))
-					}
-				>
+				<ContextMenuItem onClick={() => dispatch(setClipboard({ file, action: "move" }))}>
 					<FolderInput /> Move
 				</ContextMenuItem>
-				<ContextMenuItem
-					onClick={() =>
-						dispatch(setClipboard({ file, action: "copy" }))
-					}
-				>
+				<ContextMenuItem onClick={() => dispatch(setClipboard({ file, action: "copy" }))}>
 					<Files /> Copy
 				</ContextMenuItem>
 				<ContextMenuItem
@@ -77,7 +58,13 @@ const FileContextMenu = ({ file }) => {
 					<SquarePen /> Rename
 				</ContextMenuItem>
 				<ContextMenuSeparator />
-				<ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(
+							openModal({ modalType: "shareFile", modalProps: { file }, title: `Share ${file?.name}` }),
+						)
+					}
+				>
 					<UserPlus /> Share
 				</ContextMenuItem>
 				<ContextMenuItem
@@ -94,10 +81,7 @@ const FileContextMenu = ({ file }) => {
 					<Info /> File Information
 				</ContextMenuItem>
 				<ContextMenuSeparator />
-				<ContextMenuItem
-					variant="destructive"
-					onClick={handleMoveToTrash}
-				>
+				<ContextMenuItem variant="destructive" onClick={handleMoveToTrash}>
 					<Trash /> Delete
 				</ContextMenuItem>
 			</ContextMenuContent>

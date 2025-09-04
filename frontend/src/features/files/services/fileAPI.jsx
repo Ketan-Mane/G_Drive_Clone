@@ -55,3 +55,14 @@ export const deleteFile = async ({ id }) => {
 	const { data } = await axiosInstance.delete(`/files/${id}`);
 	return data;
 };
+
+export const shareFile = async (payload) => {
+	const { data } = await axiosInstance.put(`/files/share`, { ...payload });
+	return data;
+};
+
+export const sharedWithMe = async () => {
+	const { data } = await axiosInstance.get("/files/shared-with-me");
+	const { files } = data?.data || [];
+	return files;
+};

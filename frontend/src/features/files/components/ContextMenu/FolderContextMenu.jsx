@@ -1,17 +1,6 @@
-import {
-	ContextMenuContent,
-	ContextMenuItem,
-	ContextMenuSeparator,
-} from "@/components/ui/context-menu";
+import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
 import { openModal } from "@/store/modal/modalSlice";
-import {
-	Files,
-	FolderInput,
-	Info,
-	SquarePen,
-	Trash,
-	UserPlus,
-} from "lucide-react";
+import { Files, FolderInput, Info, SquarePen, Trash, UserPlus } from "lucide-react";
 import { useDispatch } from "react-redux";
 import useMoveToTrash from "../../hooks/useMoveToTrash";
 import toast from "react-hot-toast";
@@ -64,7 +53,17 @@ const FolderContextMenu = ({ folder }) => {
 					<SquarePen /> Rename
 				</ContextMenuItem>
 				<ContextMenuSeparator />
-				<ContextMenuItem>
+				<ContextMenuItem
+					onClick={() =>
+						dispatch(
+							openModal({
+								modalType: "shareFile",
+								modalProps: { file: folder },
+								title: `Share ${folder?.name}`,
+							}),
+						)
+					}
+				>
 					<UserPlus /> Share
 				</ContextMenuItem>
 				<ContextMenuItem
@@ -81,10 +80,7 @@ const FolderContextMenu = ({ folder }) => {
 					<Info /> Folder Information
 				</ContextMenuItem>
 				<ContextMenuSeparator />
-				<ContextMenuItem
-					variant="destructive"
-					onClick={handleMoveToTrash}
-				>
+				<ContextMenuItem variant="destructive" onClick={handleMoveToTrash}>
 					<Trash /> Delete
 				</ContextMenuItem>
 			</ContextMenuContent>

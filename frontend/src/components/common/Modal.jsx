@@ -1,13 +1,6 @@
-import {
-	Dialog,
-	DialogClose,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import RenameFile from "@/features/files/components/common/RenameFile";
+import ShareFile from "@/features/files/components/common/ShareFile";
 import FileDetails from "@/features/files/components/File/FileDetails";
 import NewFolder from "@/features/files/components/Folder/NewFolder";
 import { closeModal } from "@/store/modal/modalSlice";
@@ -15,9 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Modal = () => {
 	const dispatch = useDispatch();
-	const { open, title, modalType, modalProps } = useSelector(
-		(state) => state.modal,
-	);
+	const { open, title, modalType, modalProps } = useSelector((state) => state.modal);
 
 	const handleChange = () => {
 		dispatch(closeModal());
@@ -30,10 +21,7 @@ const Modal = () => {
 					<DialogTitle>{title}</DialogTitle>
 					<DialogDescription></DialogDescription>
 				</DialogHeader>
-				<RenderFormModal
-					modalProps={modalProps}
-					modalType={modalType}
-				/>
+				<RenderFormModal modalProps={modalProps} modalType={modalType} />
 				{/* <DialogFooter className="sm:justify-start">
 					<DialogClose asChild>
 						<Button
@@ -61,6 +49,8 @@ const RenderFormModal = ({ modalType, modalProps }) => {
 			return <RenameFile {...modalProps} />;
 		case "fileDetails":
 			return <FileDetails {...modalProps} />;
+		case "shareFile":
+			return <ShareFile {...modalProps} />;
 		default:
 			return <>Form Not Found</>;
 	}

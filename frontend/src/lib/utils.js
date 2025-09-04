@@ -27,19 +27,27 @@ export const getFileCategory = (mimeType) => {
 
 	if (
 		mimeType === "application/msword" ||
-		mimeType ===
-			"application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+		mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 	) {
 		return "Word";
 	}
 
 	if (
 		mimeType === "application/vnd.ms-excel" ||
-		mimeType ===
-			"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+		mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	) {
 		return "Excel";
 	}
 
 	return "Other";
 };
+
+export function stringToColor(str) {
+	if (!str) return;
+	let hash = 0;
+	for (let i = 0; i < str.length; i++) {
+		hash = str.charCodeAt(i) + ((hash << 5) - hash);
+	}
+	const hue = Math.abs(hash) % 360;
+	return `hsl(${hue}, 70%, 40%)`;
+}

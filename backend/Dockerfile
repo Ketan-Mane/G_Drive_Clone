@@ -1,4 +1,4 @@
-FROM node:20-slim
+FROM node:22
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
@@ -6,7 +6,10 @@ RUN apt-get update && apt-get install -y \
     ffmpeg \
     imagemagick \
     curl \
+    ghostscript \
     && rm -rf /var/lib/apt/lists/*
+
+RUN sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>//g' /etc/ImageMagick-6/policy.xml
 
 COPY package.json ./
 RUN npm install
