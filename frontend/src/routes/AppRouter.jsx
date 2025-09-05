@@ -6,6 +6,7 @@ import HomePage from "@/pages/HomePage";
 import App from "@/App";
 import TrashFiles from "@/pages/TrashFiles";
 import SharedWithMePage from "@/pages/SharedWithMePage";
+import ProfilePage from "@/pages/ProfilePage";
 
 const AppRouter = createBrowserRouter(
 	createRoutesFromElements(
@@ -17,6 +18,7 @@ const AppRouter = createBrowserRouter(
 					<Route index element={<HomePage />} />
 					<Route path="/trash" element={<TrashFiles />} />
 					<Route path="/shared-with-me" element={<SharedWithMePage />} />
+					<Route path="/me" element={<ProfilePage />} />
 				</Route>
 			</Route>
 		</Route>,

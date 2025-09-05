@@ -9,15 +9,7 @@ import jwt from "jsonwebtoken";
 const registerUser = asyncHandler(async (req, res) => {
 	const errors = validationResult(req).formatWith(({ msg }) => msg);
 	if (!errors.isEmpty()) {
-		return res
-			.status(400)
-			.json(
-				new ApiResponse(
-					400,
-					{ errors: errors.mapped() },
-					"Invalid data"
-				)
-			);
+		return res.status(400).json(new ApiResponse(400, { errors: errors.mapped() }, "Invalid data"));
 	}
 
 	const { username, email, firstName, lastName, password, avatar } = req.body;
@@ -31,18 +23,14 @@ const registerUser = asyncHandler(async (req, res) => {
 		avatar,
 	});
 
-	return res
-		.status(201)
-		.json(new ApiResponse(201, user, "Registered Successfully!"));
+	return res.status(201).json(new ApiResponse(201, user, "Registered Successfully!"));
 });
 
 const loginUser = asyncHandler(async (req, res) => {
 	const errors = validationResult(req).formatWith(({ msg }) => msg);
 
 	if (!errors.isEmpty()) {
-		return res
-			.status(400)
-			.json(new ApiResponse(400, { errors: errors.mapped() }, null));
+		return res.status(400).json(new ApiResponse(400, { errors: errors.mapped() }, null));
 	}
 
 	const { email, password } = req.body;
@@ -60,15 +48,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
 	res.cookie("auth_token", accessToken, options);
 	res.cookie("auth_r_token", refreshToken, options);
-	return res
-		.status(200)
-		.json(
-			new ApiResponse(
-				200,
-				{ user, accessToken, refreshToken },
-				"Login Successfull"
-			)
-		);
+	return res.status(200).json(new ApiResponse(200, { user, accessToken, refreshToken }, "Login Successfull"));
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
@@ -102,37 +82,59 @@ const verifyLoggedInUser = asyncHandler(async (req, res) => {
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
 	try {
-		const clientRefreshToken =
-			req.cookies.auth_r_token ||
-			req.header("Authorization")?.replace("Bearer ", "");
+		const clientRefreshToken = req.cookies.auth_r_token || req.header("Authorization")?.replace("Bearer ", "");
 
 		if (!clientRefreshToken) {
 			throw new ApiError(401, "Unauthorized request");
 		}
 
-		const decodedToken = jwt.verify(
-			clientRefreshToken,
-			process.env.JWT_SECRET
-		);
+		const decodedToken = jwt.verify(clientRefreshToken, process.env.JWT_SECRET);
 
-		const user = await User.findById(decodedToken?.id).select(
-			"+refreshToken"
-		);
+		const user = await User.findById(decodedToken?.id).select("+refreshToken");
 
 		if (clientRefreshToken !== user?.refreshToken || !user) {
 			throw new ApiError(401, "Invalid refresh token");
 		}
 
-		const { accessToken, refreshToken } =
-			await authService.generateAccessAndRefreshToken(decodedToken?.id);
+		const { accessToken, refreshToken } = await authService.generateAccessAndRefreshToken(decodedToken?.id);
 
-		return res
-
-			.status(200)
-			.json(new ApiResponse(200, { accessToken, refreshToken }));
+		return res.status(200).json(new ApiResponse(200, { accessToken, refreshToken }));
 	} catch (error) {
 		throw new ApiError(401, error?.message || "Invalid refresh token");
 	}
+});
+
+export const updateUser = asyncHandler(async (req, res) => {
+	const userId = req.user.id;
+	const { email, firstName, lastName } = req.body;
+
+	const updatedUser = await User.findByIdAndUpdate(
+		userId,
+		{ email, firstName, lastName },
+		{ new: true, runValidators: true }
+	);
+	return res.status(200).json(new ApiResponse(200, { user: updatedUser }, "Profile updated successfully"));
+});
+
+const updatePassword = asyncHandler(async (req, res) => {
+	const userId = req.user.id;
+	const { currentPassword, newPassword } = req.body;
+
+	const user = await User.findById(userId).select("password");
+	if (!user) {
+		throw new ApiError(404, "User not found");
+	}
+
+	const isMatch = await user.isPasswordCorrect(currentPassword);
+
+	if (!isMatch) {
+		throw new ApiError(401, "Current password is incorrect");
+	}
+
+	user.password = newPassword;
+	await user.save();
+
+	return res.status(200).json(new ApiResponse(200, null, "Password updated successfully"));
 });
 
 export default {
@@ -141,4 +143,6 @@ export default {
 	logoutUser,
 	verifyLoggedInUser,
 	refreshAccessToken,
+	updateUser,
+	updatePassword,
 };

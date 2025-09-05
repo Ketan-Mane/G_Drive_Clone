@@ -1,4 +1,5 @@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import UpdatePassword from "@/features/auth/components/UpdatePassword";
 import RenameFile from "@/features/files/components/common/RenameFile";
 import ShareFile from "@/features/files/components/common/ShareFile";
 import FileDetails from "@/features/files/components/File/FileDetails";
@@ -51,6 +52,8 @@ const RenderFormModal = ({ modalType, modalProps }) => {
 			return <FileDetails {...modalProps} />;
 		case "shareFile":
 			return <ShareFile {...modalProps} />;
+		case "updatePassword":
+			return <UpdatePassword {...modalProps} />;
 		default:
 			return <>Form Not Found</>;
 	}

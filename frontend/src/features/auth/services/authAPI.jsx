@@ -1,3 +1,4 @@
+import axiosInstance from "@/services/apiClient";
 import axios from "@/services/apiClient";
 
 const register = async (payload) => {
@@ -46,4 +47,23 @@ const logout = async () => {
 	}
 };
 
-export { register, login, getCurrentUser, logout };
+const updateUser = async ({ user }) => {
+	try {
+		const { data, status } = await axiosInstance.put("/auth/me", { ...user });
+		const { user: updatedUser } = data.data;
+		return updatedUser;
+	} catch (error) {
+		return false;
+	}
+};
+
+const updatePassword = async ({ currentPassword, newPassword }) => {
+	try {
+		const { data, status } = await axiosInstance.put("/auth/update-password", { currentPassword, newPassword });
+		return data;
+	} catch (error) {
+		throw error;
+	}
+};
+
+export { register, login, getCurrentUser, logout, updateUser, updatePassword };

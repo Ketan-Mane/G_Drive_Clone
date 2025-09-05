@@ -27,19 +27,14 @@ const menuOptins = [
 		icon: <UserPlus size={16} />,
 	},
 	{
-		label: "Profile",
-		path: "/profile",
-		icon: <Users size={16} />,
-	},
-	{
 		label: "Bin",
 		path: "/trash",
 		icon: <Trash size={16} />,
 	},
 	{
-		label: "Settings",
-		path: "/settings",
-		icon: <Settings size={16} />,
+		label: "Profile",
+		path: "/me",
+		icon: <Users size={16} />,
 	},
 ];
 const Sidebar = () => {
