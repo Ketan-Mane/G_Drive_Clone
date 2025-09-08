@@ -25,6 +25,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const menuOptins = [
 	{
@@ -53,6 +54,8 @@ const AppSidebar = () => {
 	const dispatch = useDispatch();
 	const uploadRef = useRef();
 
+	const isMobile = useIsMobile();
+
 	const { mutateAsync: logoutUser } = useLogout();
 	const handleLogout = async () => {
 		await logoutUser();
@@ -64,7 +67,7 @@ const AppSidebar = () => {
 
 	return (
 		<>
-			<Sidebar>
+			<Sidebar side={isMobile ? "right" : "left"}>
 				<SidebarHeader className="text-center">
 					<h1 className="text-2xl font-semibold">Drive Clone</h1>
 				</SidebarHeader>

@@ -1,11 +1,6 @@
 import clsx from "clsx";
 import { ChevronDown, X } from "lucide-react";
-import React, {
-	forwardRef,
-	useImperativeHandle,
-	useRef,
-	useState,
-} from "react";
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import SingleFileUpload from "./SingleFileUpload";
 import useUploadFile from "../../hooks/useUploadFile";
 import toast from "react-hot-toast";
@@ -88,27 +83,18 @@ const UploadFile = forwardRef((props, ref) => {
 	return (
 		<div
 			className={clsx(
-				"right-2 bottom-3 flex w-sm flex-col gap-y-1 rounded-md p-2 shadow-md select-none",
-				close ? "hidden" : "absolute",
+				"right-2 bottom-1 md:bottom-3 flex w-sm flex-col gap-y-1 rounded-md p-2 shadow-md select-none bg-white",
+				close ? "hidden" : "fixed",
 			)}
 		>
-			<input
-				type="file"
-				ref={fileInputRef}
-				onChange={handleFileChange}
-				className="hidden"
-				multiple
-			/>
+			<input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" multiple />
 			<div className="flex items-center justify-between">
 				<h3 className="font-semibold">Uploading 1 Item</h3>
 				<span className="flex items-center gap-2">
 					<ChevronDown
 						onClick={() => setMinimize(!minimize)}
 						size={22}
-						className={clsx(
-							"cursor-pointer transition",
-							close ? "rotate-180" : "",
-						)}
+						className={clsx("cursor-pointer transition", close ? "rotate-180" : "")}
 					/>
 					<X
 						size={20}

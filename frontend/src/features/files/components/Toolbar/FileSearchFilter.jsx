@@ -4,12 +4,12 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 const FileSearchFilter = ({ search, type, setSearch, setType }) => {
 	return (
 		<div className="my-4">
-			<div className="flex justify-between items-center gap-2">
+			<div className="flex max-sm:flex-col justify-between sm:items-center gap-2">
 				<Input
 					placeholder="Search files and folders..."
 					value={search}
 					onChange={(e) => setSearch(e.target.value)}
-					className="w-1/2"
+					className="w-full sm:w-1/2"
 				/>
 
 				<Select onValueChange={setType} defaultValue="all">

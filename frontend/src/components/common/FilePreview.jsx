@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import { getFileCategory } from "@/lib/utils";
 import { useDispatch } from "react-redux";
 import { closeModal } from "@/store/modal/modalSlice";
+import { useEffect } from "react";
 
 const FilePreview = ({ file }) => {
 	const dispatch = useDispatch();
@@ -14,6 +15,14 @@ const FilePreview = ({ file }) => {
 
 	const officeExtensions = [".doc", ".docx", ".xls", ".xlsx"];
 	const isOfficeFile = officeExtensions.some((ext) => file.name.endsWith(ext));
+
+	useEffect(() => {
+		document.body.style.overflow = "hidden";
+
+		return () => {
+			document.body.style.overflow = "";
+		};
+	}, []);
 
 	const renderFile = () => {
 		switch (fileType) {
@@ -64,14 +73,14 @@ const FilePreview = ({ file }) => {
 				})}
 				open={true}
 			>
-				<div className="w-full h-full overflow-y-auto">
+				<div className="w-full h-full flex flex-col gap-y-2">
 					<div className="w-full flex justify-between items-center ">
 						<div className="sm:text-lg">{name}</div>
 						<button onClick={() => dispatch(closeModal())} className="cursor-pointer">
 							<X />
 						</button>
 					</div>
-					<div className="w-full h-[calc(100vh-28px)]">{renderFile()}</div>
+					<div className="w-full h-[calc(100vh-40px)]">{renderFile()}</div>
 				</div>
 			</Backdrop>
 		</>

@@ -1,4 +1,4 @@
-FROM node:22
+FROM node:22-slim
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y \
     imagemagick \
     curl \
     ghostscript \
+    nano \
     && rm -rf /var/lib/apt/lists/*
 
 RUN sed -i 's/<policy domain="coder" rights="none" pattern="PDF" \/>//g' /etc/ImageMagick-6/policy.xml

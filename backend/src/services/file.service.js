@@ -27,7 +27,6 @@ const searchFiles = async ({ search, type, parent }) => {
 	try {
 		const query = {};
 
-		console.log(type);
 		// 🔍 Search by name
 		if (search) {
 			query.name = { $regex: search, $options: "i" };
