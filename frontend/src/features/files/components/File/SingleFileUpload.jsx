@@ -12,15 +12,9 @@ const SingleFileUpload = ({ upload }) => {
 			) : status === "uploading" ? (
 				<UploadProgressIcon progress={progress} />
 			) : status === "success" ? (
-				<Check
-					size={20}
-					className="shrink-0 rounded-full bg-green-600 p-0.5 text-white"
-				/>
+				<Check size={20} className="shrink-0 rounded-full bg-green-600 p-0.5 text-white" />
 			) : (
-				<X
-					size={20}
-					className="rounded-full bg-red-600 p-0.5 text-white"
-				/>
+				<X size={20} className="rounded-full bg-red-600 p-0.5 text-white" />
 			)}
 		</div>
 	);

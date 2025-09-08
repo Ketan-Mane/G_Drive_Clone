@@ -32,9 +32,7 @@ const DeleteModal = ({
 
 				<div className="flex flex-col gap-y-4 items-center">
 					<img src={Bin} alt="bin" className="w-14" />
-					<h2 className="text-xl font-semibold">
-						Are you sure you want to delete this file?
-					</h2>
+					<h2 className="text-xl font-semibold">Are you sure you want to delete this file?</h2>
 					<p>{file?.name}</p>
 				</div>
 
@@ -45,12 +43,7 @@ const DeleteModal = ({
 						</Button>
 					</DialogClose>
 					<DialogClose asChild>
-						<Button
-							onClick={handleDelete}
-							type="button"
-							variant="destructive"
-							className="cursor-pointer"
-						>
+						<Button onClick={handleDelete} type="button" variant="destructive" className="cursor-pointer">
 							Delete
 						</Button>
 					</DialogClose>

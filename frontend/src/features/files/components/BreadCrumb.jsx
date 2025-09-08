@@ -1,18 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-	goToBreadcrumbLevel,
-	setBreadcrumb,
-	setCurrentFolderId,
-} from "../fileSlice";
+import { goToBreadcrumbLevel, setBreadcrumb, setCurrentFolderId } from "../fileSlice";
 import clsx from "clsx";
 import { ChevronRight, Folder } from "lucide-react";
 
-const BreadCrumb = () => {
+const BreadCrumb = ({ rootFolder = "My Folder" }) => {
 	const dispatch = useDispatch();
-	const { breadcrumb, currentFolderId, rootFolderId } = useSelector(
-		(state) => state.file,
-	);
+	const { breadcrumb, currentFolderId, rootFolderId } = useSelector((state) => state.file);
 
 	return (
 		<div className="flex items-center gap-2">
@@ -23,7 +17,7 @@ const BreadCrumb = () => {
 				}}
 				className={clsx("cursor-pointer font-semibold")}
 			>
-				{breadcrumb?.length === 0 ? "My Folder" : <Folder />}
+				{breadcrumb?.length === 0 ? rootFolder : <Folder />}
 			</span>
 			{breadcrumb.map((menu, index) => (
 				<div className="flex w-max items-center" key={menu?.id}>
@@ -33,10 +27,7 @@ const BreadCrumb = () => {
 							dispatch(goToBreadcrumbLevel(index));
 							dispatch(setCurrentFolderId(menu?.id));
 						}}
-						className={clsx(
-							"cursor-pointer",
-							menu.id === currentFolderId ? "font-semibold" : "",
-						)}
+						className={clsx("cursor-pointer", menu.id === currentFolderId ? "font-semibold" : "")}
 					>
 						{menu.name}
 					</span>

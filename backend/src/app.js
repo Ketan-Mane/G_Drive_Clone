@@ -7,6 +7,7 @@ import errorHandler from "./middlewares/errorHandler.middleware.js";
 import { setupDirectries } from "./utils/setupDirectories.js";
 import path from "path";
 import { __dirname } from "./constants.js";
+import { authMiddleware } from "./middlewares/auth.middleware.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(
 setupDirectries();
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/api/auth", AuthRouter);
+app.use("/api", authMiddleware);
 app.use("/api/files", FileRouter);
 
 app.use(errorHandler);

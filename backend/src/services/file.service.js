@@ -23,6 +23,43 @@ const getFiles = async ({ parent, isTrashed = false }) => {
 	}
 };
 
+const searchFiles = async ({ search, type, parent }) => {
+	try {
+		const query = {};
+
+		console.log(type);
+		// 🔍 Search by name
+		if (search) {
+			query.name = { $regex: search, $options: "i" };
+		}
+
+		// 📂 Filter by MIME type
+		if (type && type !== "all") {
+			if (type === "image") query.type = /^image\//;
+			else if (type === "video") query.type = /^video\//;
+			else if (type === "audio") query.type = /^audio\//;
+			else if (type === "document") {
+				query.type = {
+					$in: [
+						"application/pdf",
+						"application/msword",
+						"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+						"application/vnd.ms-excel",
+						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+						"application/vnd.ms-powerpoint",
+						"application/vnd.openxmlformats-officedocument.presentationml.presentation",
+						"text/plain",
+					],
+				};
+			} else if (type === "folder") query.isFolder = true;
+		}
+		const files = await File.find(query);
+		return files;
+	} catch (error) {
+		throw error;
+	}
+};
+
 const getSharedWithMeFiles = async ({ user }) => {
 	try {
 		return await File.find(
@@ -201,13 +238,15 @@ const restoreTrash = async ({ id }) => {
 const deleteFile = async ({ id }) => {
 	try {
 		const file = await File.findByIdAndDelete(id);
-		const thumbnailPath = path.join(THUMBNAIL_DIR, `${file?._id}.png`);
-		const filePath = path.join(file?.contentPath);
-		if (fs.existsSync(thumbnailPath)) {
-			fs.unlinkSync(thumbnailPath);
-		}
-		if (fs.existsSync(filePath)) {
-			fs.unlinkSync(filePath);
+		if (file?.isFolder) {
+			const thumbnailPath = path.join(THUMBNAIL_DIR, `${file?._id}.png`);
+			const filePath = path.join(file?.contentPath);
+			if (fs.existsSync(thumbnailPath)) {
+				fs.unlinkSync(thumbnailPath);
+			}
+			if (fs.existsSync(filePath)) {
+				fs.unlinkSync(filePath);
+			}
 		}
 	} catch (error) {
 		throw error;
@@ -240,6 +279,7 @@ const removeFileAccess = async ({ user, id }) => {
 
 export default {
 	getFiles,
+	searchFiles,
 	getSharedWithMeFiles,
 	getFileById,
 	createFile,

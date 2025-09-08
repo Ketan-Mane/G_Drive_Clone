@@ -5,8 +5,12 @@ import ContextMenuWrapper from "../ContextMenu/ContextMenuWrapper";
 import FileContextMenu from "../ContextMenu/FileContextMenu";
 import { Link } from "react-router-dom";
 import { Folder } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { openModal } from "@/store/modal/modalSlice";
 
 const SingleFile = ({ file }) => {
+	const dispatch = useDispatch();
+
 	const { attributes, listeners, setNodeRef, transform } = useDraggable({
 		id: file?._id,
 		data: {
@@ -24,6 +28,15 @@ const SingleFile = ({ file }) => {
 				{...listeners}
 				{...attributes}
 				style={style}
+				onDoubleClick={() =>
+					dispatch(
+						openModal({
+							title: file?.name,
+							modalType: "previewFile",
+							modalProps: { file },
+						}),
+					)
+				}
 				className="flex flex-col gap-2 rounded-md border bg-white p-2 transition-colors duration-300 hover:bg-gray-100"
 			>
 				{file?.isFolder ? (
@@ -31,13 +44,13 @@ const SingleFile = ({ file }) => {
 						<Folder size={100} />
 					</div>
 				) : (
-					<Link target="_blank" to={file?.previewUrl}>
+					<>
 						<img
 							src={file?.thumbnailUrl}
 							alt={file?.name}
 							className="h-40 w-full rounded object-cover object-top"
 						/>
-					</Link>
+					</>
 				)}
 				<p className="truncate font-semibold">{file.name}</p>
 				<div className="flex justify-between text-xs text-nowrap">

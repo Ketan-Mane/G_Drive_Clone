@@ -11,6 +11,14 @@ const getFiles = asyncHandler(async (req, res) => {
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
+const searchFiles = asyncHandler(async (req, res) => {
+	const { search, type } = req.query;
+	const user = req.user;
+	const files = await fileService.searchFiles({ search, type, parent: user?.rootFolder.toString() });
+
+	return res.status(200).json(new ApiResponse(200, { files }));
+});
+
 const getTrashedFiles = asyncHandler(async (req, res) => {
 	const user = req.user;
 	const files = await fileService.getFiles({
@@ -134,6 +142,7 @@ const shareFile = asyncHandler(async (req, res) => {
 
 export default {
 	getFiles,
+	searchFiles,
 	getTrashedFiles,
 	getSharedWithMeFiles,
 	getFile,

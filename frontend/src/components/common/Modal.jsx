@@ -6,6 +6,7 @@ import FileDetails from "@/features/files/components/File/FileDetails";
 import NewFolder from "@/features/files/components/Folder/NewFolder";
 import { closeModal } from "@/store/modal/modalSlice";
 import { useDispatch, useSelector } from "react-redux";
+import FilePreview from "./FilePreview";
 
 const Modal = () => {
 	const dispatch = useDispatch();
@@ -15,6 +16,10 @@ const Modal = () => {
 		dispatch(closeModal());
 	};
 
+	if (modalType === "previewFile") {
+		return <FilePreview {...modalProps} />;
+	}
+
 	return (
 		<Dialog open={open} onOpenChange={handleChange}>
 			<DialogContent className="sm:max-w-md">
@@ -23,18 +28,6 @@ const Modal = () => {
 					<DialogDescription></DialogDescription>
 				</DialogHeader>
 				<RenderFormModal modalProps={modalProps} modalType={modalType} />
-				{/* <DialogFooter className="sm:justify-start">
-					<DialogClose asChild>
-						<Button
-							onClick={() => dispatch(closeModal())}
-							type="button"
-							variant="secondary"
-							className="cursor-pointer"
-						>
-							Close
-						</Button>
-					</DialogClose>
-				</DialogFooter> */}
 			</DialogContent>
 		</Dialog>
 	);

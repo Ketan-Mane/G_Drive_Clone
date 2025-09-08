@@ -1,18 +1,19 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "./Sidebar";
 import Modal from "@/components/common/Modal";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import AppSidebar from "./AppSidebar";
 
 export default function DashboardLayout() {
 	return (
-		<div className="flex flex-col lg:flex-row lg:min-h-screen">
-			<Sidebar />
-
-			<main className="flex-1 h-screen p-2 lg:p-6 overflow-y-auto overflow-x-hidden">
-				<Outlet />
-			</main>
-
-			{/* Pop Modal */}
+		<>
+			<SidebarProvider>
+				<AppSidebar />
+				{/* <SidebarTrigger /> */}
+				<main className="w-full p-2">
+					<Outlet />
+				</main>
+			</SidebarProvider>
 			<Modal />
-		</div>
+		</>
 	);
 }

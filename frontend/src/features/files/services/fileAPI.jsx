@@ -18,6 +18,18 @@ export const getFile = async (id) => {
 	return file;
 };
 
+export const searchFiles = async ({ queryKey }) => {
+	const [_key, { search, type }] = queryKey;
+
+	const url = new URLSearchParams();
+	if (search) url.append("search", search);
+	if (type) url.append("type", type);
+
+	const { data } = await axiosInstance.get(`/files/search?${url.toString()}`);
+	const { files } = data?.data;
+	return files;
+};
+
 export const uploadFile = async ({ file, parent_id }) => {
 	const form = new FormData();
 	form.append("file", file);

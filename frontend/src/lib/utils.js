@@ -20,23 +20,23 @@ export function formatBytes(bytes, decimals = 2) {
 export const getFileCategory = (mimeType) => {
 	if (!mimeType) return "unknown";
 
-	if (mimeType.startsWith("image/")) return "Image";
-	if (mimeType === "application/pdf") return "PDF";
-	if (mimeType.startsWith("video/")) return "Video";
-	if (mimeType.startsWith("audio/")) return "Audio";
+	if (mimeType.startsWith("image/")) return "image";
+	if (mimeType === "application/pdf") return "pdf";
+	if (mimeType.startsWith("video/")) return "video";
+	if (mimeType.startsWith("audio/")) return "audio";
 
 	if (
 		mimeType === "application/msword" ||
 		mimeType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 	) {
-		return "Word";
+		return "word";
 	}
 
 	if (
 		mimeType === "application/vnd.ms-excel" ||
 		mimeType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 	) {
-		return "Excel";
+		return "excel";
 	}
 
 	return "Other";
