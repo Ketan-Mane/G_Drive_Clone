@@ -30,15 +30,21 @@ export const searchFiles = async ({ queryKey }) => {
 	return files;
 };
 
-export const uploadFile = async ({ file, parent_id }) => {
+export const uploadFile = async ({ file, parent_id, onProgress }) => {
 	const form = new FormData();
 	form.append("file", file);
 	if (parent_id) {
 		form.append("parent_id", parent_id);
 	}
-	const {} = await axiosInstance.post("/files", form, {
+	await axiosInstance.post("/files", form, {
 		headers: {
 			"Content-Type": "multipart/form-data",
+		},
+		onUploadProgress: (progressEvent) => {
+			if (onProgress) {
+				const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+				onProgress(percentCompleted);
+			}
 		},
 	});
 };

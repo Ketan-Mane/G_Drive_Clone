@@ -45,14 +45,27 @@ const UploadFile = forwardRef((props, ref) => {
 				return updated;
 			});
 			await uploadFile(
-				{ file, parent_id: currentFolderId },
+				{
+					file,
+					parent_id: currentFolderId,
+					onProgress: (percent) => {
+						setUploads((prev) => {
+							const updated = [...prev];
+							updated[index] = {
+								...updated[index],
+								progress: percent,
+								status: percent === 100 ? "processing" : "uploading",
+							};
+							return updated;
+						});
+					},
+				},
 				{
 					onSuccess: () => {
 						setUploads((prev) => {
 							const updated = [...prev];
 							updated[index] = {
 								...updated[index],
-								progress: 100,
 								status: "success",
 							};
 							return updated;
