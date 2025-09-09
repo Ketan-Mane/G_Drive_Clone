@@ -4,11 +4,6 @@ import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
 	{
-		username: {
-			type: String,
-			required: [true, "Username is required"],
-			unique: true,
-		},
 		email: {
 			type: String,
 			required: [true, "Email is required"],
@@ -35,10 +30,10 @@ const userSchema = new Schema(
 			type: String,
 			select: false,
 		},
-		rootFolder :{
+		rootFolder: {
 			type: Schema.Types.ObjectId,
 			ref: "File",
-		}
+		},
 	},
 	{
 		timestamps: true,
@@ -61,7 +56,6 @@ userSchema.methods.generateAccessToken = async function () {
 		{
 			id: this._id,
 			email: this.email,
-			username: this.username,
 			fullName: this.firstName + " " + this.lastName,
 		},
 		process.env.JWT_SECRET,

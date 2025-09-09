@@ -12,16 +12,9 @@ const registerUser = asyncHandler(async (req, res) => {
 		return res.status(400).json(new ApiResponse(400, { errors: errors.mapped() }, "Invalid data"));
 	}
 
-	const { username, email, firstName, lastName, password, avatar } = req.body;
+	const { email, firstName, lastName, password, avatar } = req.body;
 
-	const user = await authService.registerUser({
-		username,
-		email,
-		firstName,
-		lastName,
-		password,
-		avatar,
-	});
+	const user = await authService.registerUser({ email, firstName, lastName, password, avatar });
 
 	return res.status(201).json(new ApiResponse(201, user, "Registered Successfully!"));
 });

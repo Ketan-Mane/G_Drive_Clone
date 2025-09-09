@@ -14,39 +14,21 @@ const generateAccessAndRefreshToken = async (userId) => {
 
 		return { accessToken, refreshToken };
 	} catch (error) {
-		throw new ApiError(
-			500,
-			error.message ||
-				"Something went wrong during access and refresh token generate",
-			null
-		);
+		throw new ApiError(500, error.message || "Something went wrong during access and refresh token generate", null);
 	}
 };
 
-const registerUser = async ({
-	username,
-	email,
-	firstName,
-	lastName,
-	password,
-	avatar,
-}) => {
+const registerUser = async ({ email, firstName, lastName, password, avatar }) => {
 	try {
 		const isUserExists = await User.findOne({
-			$or: [{ username }, { email }],
+			$or: [{ email }],
 		});
 
 		if (isUserExists) {
-			throw new ApiError(
-				400,
-				"User with email or username already exists",
-				null,
-				null
-			);
+			throw new ApiError(400, "User with email already exists", null, null);
 		}
 
 		const newUser = await User.create({
-			username,
 			email,
 			firstName,
 			lastName,
@@ -74,7 +56,7 @@ const registerUser = async ({
 const loginUser = async ({ email, password }) => {
 	try {
 		const user = await User.findOne({
-			$or: [{ email }, { username: email }],
+			$or: [{ email }],
 		}).select("password");
 
 		if (!user) {
@@ -86,8 +68,7 @@ const loginUser = async ({ email, password }) => {
 			throw new ApiError(400, "Invalid credentials", null);
 		}
 
-		const { accessToken, refreshToken } =
-			await generateAccessAndRefreshToken(user._id);
+		const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
 		const loggedInUser = await User.findById(user.id);
 

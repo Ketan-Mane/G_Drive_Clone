@@ -87,7 +87,7 @@ const getFileById = async ({ id, excludePath = true }) => {
 			})
 			.populate({
 				path: "owner",
-				select: "firstName lastName email username",
+				select: "firstName lastName email",
 			})
 			.populate({
 				path: "sharedWith",
@@ -254,7 +254,7 @@ const deleteFile = async ({ id }) => {
 
 const shareFile = async ({ email, id }) => {
 	try {
-		const user = await userService.getUserByEmailOrUsername(email);
+		const user = await userService.getUserByEmail(email);
 		const file = await File.findByIdAndUpdate(id, {
 			$addToSet: { sharedWith: user },
 		});

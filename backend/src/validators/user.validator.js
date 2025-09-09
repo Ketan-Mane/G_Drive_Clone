@@ -1,13 +1,7 @@
 import { body } from "express-validator";
 
 export const validateRegisterUser = [
-	body("username").notEmpty().withMessage("Username is required"),
-	body("email")
-		.notEmpty()
-		.withMessage("Email is required")
-		.bail()
-		.isEmail()
-		.withMessage("Invalid email"),
+	body("email").notEmpty().withMessage("Email is required").bail().isEmail().withMessage("Invalid email"),
 	body("firstName").notEmpty().withMessage("First Name is required"),
 	body("password").notEmpty().withMessage("Password is required"),
 ];
