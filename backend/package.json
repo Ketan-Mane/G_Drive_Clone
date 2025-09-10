@@ -1,31 +1,31 @@
 {
-  "name": "google_drive_clone",
-  "version": "1.0.0",
-  "description": "Creating google drive clone for practice",
-  "main": "server.js",
-  "type": "module",
-  "scripts": {
-    "dev": "nodemon src/server.js"
-  },
-  "author": "Ketan Mane",
-  "license": "ISC",
-  "dependencies": {
-    "@aws-sdk/client-s3": "^3.884.0",
-    "@aws-sdk/s3-request-presigner": "^3.884.0",
-    "bcrypt": "^5.1.1",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
-    "dotenv": "^16.5.0",
-    "express": "^5.1.0",
-    "express-validator": "^7.2.1",
-    "filepreview-es6": "^1.0.8",
-    "jsonwebtoken": "^9.0.2",
-    "mime-types": "^3.0.1",
-    "mongoose": "^8.13.2",
-    "multer": "^2.0.1",
-    "uuid": "^11.1.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.10"
-  }
+	"name": "google_drive_clone",
+	"version": "1.0.0",
+	"description": "Creating google drive clone for practice",
+	"main": "server.js",
+	"type": "module",
+	"scripts": {
+		"dev": "nodemon src/server.js"
+	},
+	"author": "Ketan Mane",
+	"license": "ISC",
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.884.0",
+		"@aws-sdk/s3-request-presigner": "^3.884.0",
+		"bcrypt": "^5.1.1",
+		"cookie-parser": "^1.4.7",
+		"cors": "^2.8.5",
+		"dotenv": "^16.5.0",
+		"express": "^5.1.0",
+		"express-validator": "^7.2.1",
+		"filepreview-es6": "^1.0.8",
+		"jsonwebtoken": "^9.0.2",
+		"mime-types": "^3.0.1",
+		"mongoose": "^8.13.2",
+		"multer": "^2.0.1",
+		"uuid": "^11.1.0"
+	},
+	"devDependencies": {
+		"nodemon": "^3.1.10"
+	}
 }

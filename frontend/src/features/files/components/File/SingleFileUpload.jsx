@@ -5,10 +5,10 @@ const SingleFileUpload = ({ upload }) => {
 	const { file, progress, status } = upload;
 
 	return (
-		<div className="flex items-center justify-between">
+		<div className="flex items-center justify-between text-sm py-1">
 			<span className="truncate">{file.name}</span>
 			{status === "pending" || status === "processing" ? (
-				<LoaderCircle size={20} className="animate-spin" />
+				<LoaderCircle size={18} className="animate-spin p-0 m-0" />
 			) : status === "uploading" ? (
 				<UploadProgressIcon progress={progress} />
 			) : status === "success" ? (

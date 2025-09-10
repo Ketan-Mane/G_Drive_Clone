@@ -1,5 +1,4 @@
 import axiosInstance from "@/services/apiClient";
-import axios from "axios";
 
 export const getFiles = async (folder) => {
 	const { data } = await axiosInstance.get(`/files/folders/${folder}`);
@@ -31,15 +30,15 @@ export const searchFiles = async ({ queryKey }) => {
 	return files;
 };
 
-export const createFile = async (payload) => {
-	const { data } = await axiosInstance.post("/files", payload);
-	return data;
-};
-
-export const uploadFile = async ({ file, url, onProgress }) => {
-	const { data } = await axios.put(url, file, {
+export const uploadFile = async ({ file, parent_id, onProgress }) => {
+	const form = new FormData();
+	form.append("file", file);
+	if (parent_id) {
+		form.append("parent_id", parent_id);
+	}
+	await axiosInstance.post("/files", form, {
 		headers: {
-			"Content-Type": file.type,
+			"Content-Type": "multipart/form-data",
 		},
 		onUploadProgress: (progressEvent) => {
 			if (onProgress) {
@@ -48,9 +47,29 @@ export const uploadFile = async ({ file, url, onProgress }) => {
 			}
 		},
 	});
-
-	return data;
 };
+
+// create new file and get the aws signed url
+// export const createFile = async (payload) => {
+// 	const { data } = await axiosInstance.post("/files", payload);
+// 	return data;
+// };
+
+// export const uploadFile = async ({ file, url, onProgress }) => {
+// 	const { data } = await axios.put(url, file, {
+// 		headers: {
+// 			"Content-Type": file.type,
+// 		},
+// 		onUploadProgress: (progressEvent) => {
+// 			if (onProgress) {
+// 				const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+// 				onProgress(percentCompleted);
+// 			}
+// 		},
+// 	});
+
+// 	return data;
+// };
 
 export const createFolder = async (payload) => {
 	const { data } = await axiosInstance.post("/files/folder", payload);
@@ -74,6 +93,11 @@ export const moveToTrash = async ({ id, payload }) => {
 
 export const deleteFile = async ({ id }) => {
 	const { data } = await axiosInstance.delete(`/files/${id}`);
+	return data;
+};
+
+export const deleteAllTrashFiles = async () => {
+	const { data } = await axiosInstance.delete(`/files/trash/empty`);
 	return data;
 };
 

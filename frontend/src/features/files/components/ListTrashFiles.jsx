@@ -2,13 +2,31 @@ import React from "react";
 import useTrashFiles from "../hooks/useTrashFiles";
 import SingleTrashFile from "./Trash/SingleTrashFile";
 import EmptyIcon from "@/assets/empty_state_trash.svg";
+import { Button } from "@/components/ui/button";
+import useEmptyTrash from "../hooks/useEmptyTrash";
 
 const ListTrashFiles = () => {
 	const { data: files } = useTrashFiles();
 
+	const { mutateAsync: emptyTrash, isPending } = useEmptyTrash();
+
+	const handleEmptyTrash = async () => {
+		await emptyTrash();
+	};
+
 	return (
 		<div className="flex flex-col gap-y-2">
-			<h1 className="text-2xl font-bold">Bin</h1>
+			<div className="flex items-center justify-between">
+				<h1 className="text-2xl font-bold">Bin</h1>
+				<Button
+					onClick={handleEmptyTrash}
+					disabled={isPending}
+					variant="destructive"
+					className="cursor-pointer"
+				>
+					Empty Bin
+				</Button>
+			</div>
 
 			<div className="w-full grid cursor-default grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
 				{files?.length > 0 ? (

@@ -252,7 +252,7 @@ const restoreTrash = async ({ id }) => {
 const deleteFile = async ({ id }) => {
 	try {
 		const file = await File.findByIdAndDelete(id);
-		if (file?.isFolder) {
+		if (!file?.isFolder) {
 			const thumbnailPath = path.join(THUMBNAIL_DIR, `${file?._id}.png`);
 			const filePath = path.join(file?.contentPath);
 			if (fs.existsSync(thumbnailPath)) {
@@ -262,6 +262,20 @@ const deleteFile = async ({ id }) => {
 				fs.unlinkSync(filePath);
 			}
 		}
+	} catch (error) {
+		throw error;
+	}
+};
+
+const deleteAllTrashFiles = async ({ owner }) => {
+	try {
+		const files = await File.find({ owner, isTrashed: true });
+
+		await Promise.all(
+			files?.map(async (file) => {
+				await deleteFile({ id: file?._id });
+			})
+		);
 	} catch (error) {
 		throw error;
 	}
@@ -305,6 +319,7 @@ export default {
 	moveToTrash,
 	restoreTrash,
 	deleteFile,
+	deleteAllTrashFiles,
 	shareFile,
 	removeFileAccess,
 };
