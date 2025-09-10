@@ -14,12 +14,11 @@ router.route("/:id").get(fileController.getFile);
 router.route("/download/:id").get(fileController.getFiles);
 router.route("/preview/:id").get(fileController.previewFile);
 
-router.route("/").post(upload.single("file"), fileController.createFile);
+router.route("/").post(fileController.createFile);
 
 router.route("/folder").post(fileController.createFolder);
 router.route("/:id").patch(fileController.updateFile);
 router.route("/:id").delete(fileController.deleteFile);
 
 router.route("/share").put(fileController.shareFile);
-
 export default router;

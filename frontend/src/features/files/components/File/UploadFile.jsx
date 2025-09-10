@@ -1,18 +1,21 @@
 import clsx from "clsx";
 import { ChevronDown, X } from "lucide-react";
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useImperativeHandle, useRef, useState, useEffect, useCallback } from "react";
 import SingleFileUpload from "./SingleFileUpload";
 import useUploadFile from "../../hooks/useUploadFile";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
+import useCreateFile from "../../hooks/useCreateFile";
 
 const UploadFile = forwardRef((props, ref) => {
 	const fileInputRef = useRef(null);
 	const [close, setClose] = useState(true);
 	const [minimize, setMinimize] = useState(false);
-	const [uploads, setUploads] = useState([]);
+	const [queue, setQueue] = useState([]); // upload queue
+	const [isUploading, setIsUploading] = useState(false);
 
 	const { currentFolderId } = useSelector((state) => state.file);
+	const { mutateAsync: createFile } = useCreateFile();
 	const { mutateAsync: uploadFile } = useUploadFile();
 
 	useImperativeHandle(ref, () => ({
@@ -25,34 +28,46 @@ const UploadFile = forwardRef((props, ref) => {
 		const files = event.target.files;
 		if (!files) return;
 		const filesArray = Array.from(files);
-		const uploadEntries = filesArray?.map((file) => ({
+
+		const uploadEntries = filesArray.map((file) => ({
 			file,
 			progress: 0,
 			status: "pending",
 		}));
-		setUploads(uploadEntries);
+
+		setQueue((prev) => [...prev, ...uploadEntries]);
 		setClose(false);
 		event.target.value = null;
-		uploadEntries.forEach(async (upload, index) => {
-			const { file } = upload;
+	};
 
-			setUploads((prev) => {
-				const updated = [...prev];
-				updated[index] = {
-					...updated[index],
-					status: "uploading",
-				};
-				return updated;
-			});
+	// Effect to handle queue system
+	const processNextFile = useCallback(async () => {
+		if (isUploading) return;
+		if (queue.length === 0) return;
+
+		const current = queue[0];
+		setIsUploading(true);
+
+		try {
+			// Step 1: Ask backend to create file + get signed URL
+			const payload = {
+				name: current.file.name,
+				size: current.file.size,
+				type: current.file.type,
+				parent_id: currentFolderId,
+			};
+			const { data } = await createFile(payload);
+			const { file: newFile, url } = data;
+			// Step 2: Upload file to S3 using signed URL
 			await uploadFile(
 				{
-					file,
-					parent_id: currentFolderId,
+					file: current.file,
+					url,
 					onProgress: (percent) => {
-						setUploads((prev) => {
+						setQueue((prev) => {
 							const updated = [...prev];
-							updated[index] = {
-								...updated[index],
+							updated[0] = {
+								...updated[0],
 								progress: percent,
 								status: percent === 100 ? "processing" : "uploading",
 							};
@@ -61,37 +76,39 @@ const UploadFile = forwardRef((props, ref) => {
 					},
 				},
 				{
-					onSuccess: () => {
-						setUploads((prev) => {
-							const updated = [...prev];
-							updated[index] = {
-								...updated[index],
-								status: "success",
-							};
-							return updated;
-						});
+					onSuccess: async (data) => {
+						console.log(data);
 					},
 					onError: (error) => {
-						if (error?.response) {
-							const { message } = error?.response?.data;
-							toast.error(message || "Failed to upload file");
-							setUploads((prev) => {
-								const updated = [...prev];
-								updated[index] = {
-									...updated[index],
-									status: "error",
-								};
-								return updated;
-							});
-							return;
-						}
-
-						toast.error(error?.message || "Failed to upload file");
+						console.log(error);
 					},
 				},
 			);
-		});
-	};
+			// Mark as success
+			setQueue((prev) => {
+				const updated = [...prev];
+				updated[0] = { ...updated[0], status: "success", progress: 100 };
+				return updated;
+			});
+		} catch (error) {
+			toast.error(error?.message || "Failed to upload file");
+			setQueue((prev) => {
+				const updated = [...prev];
+				updated[0] = { ...updated[0], status: "error" };
+				return updated;
+			});
+		} finally {
+			// Remove finished file & process next
+			setQueue((prev) => prev.slice(1));
+			setIsUploading(false);
+		}
+	}, [isUploading, queue, createFile, uploadFile, currentFolderId]);
+
+	useEffect(() => {
+		if (!isUploading && queue.length > 0) {
+			processNextFile();
+		}
+	}, [queue, isUploading, processNextFile]);
 
 	return (
 		<div
@@ -102,7 +119,10 @@ const UploadFile = forwardRef((props, ref) => {
 		>
 			<input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" multiple />
 			<div className="flex items-center justify-between">
-				<h3 className="font-semibold">Uploading 1 Item</h3>
+				<h3 className="font-semibold">
+					Uploading {queue.filter((u) => u.status === "uploading" || u.status === "processing").length} /
+					{queue.length} Item(s)
+				</h3>
 				<span className="flex items-center gap-2">
 					<ChevronDown
 						onClick={() => setMinimize(!minimize)}
@@ -113,7 +133,7 @@ const UploadFile = forwardRef((props, ref) => {
 						size={20}
 						onClick={() => {
 							setClose(true);
-							setUploads([]);
+							setQueue([]);
 						}}
 						className="cursor-pointer"
 					/>
@@ -125,7 +145,7 @@ const UploadFile = forwardRef((props, ref) => {
 					minimize ? "max-h-0" : "max-h-40",
 				)}
 			>
-				{uploads?.map((upload, index) => (
+				{queue?.map((upload, index) => (
 					<SingleFileUpload upload={upload} key={index} />
 				))}
 			</div>

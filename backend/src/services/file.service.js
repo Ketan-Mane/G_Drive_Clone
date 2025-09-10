@@ -141,6 +141,21 @@ const updateThumbnail = async ({ id, file }) => {
 	}
 };
 
+const updateContentPath = async ({ id, path }) => {
+	const downloadUrl = `${process.env.APP_URL}/api/files/download/${id}`;
+	const previewUrl = `${process.env.APP_URL}/api/files/preview/${id}`;
+	const updatedFile = await File.findByIdAndUpdate(
+		id,
+		{
+			contentPath: path,
+			downloadUrl,
+			previewUrl,
+		},
+		{ new: true }
+	);
+	return updatedFile;
+};
+
 const moveFile = async ({ id, parent }) => {
 	try {
 		const checkFile = await File.findById(id);
@@ -283,6 +298,7 @@ export default {
 	getFileById,
 	createFile,
 	updateThumbnail,
+	updateContentPath,
 	moveFile,
 	copyFile,
 	renameFile,

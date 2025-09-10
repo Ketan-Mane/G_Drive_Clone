@@ -4,6 +4,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 import path from "path";
 import fs from "fs";
 import ApiError from "../utils/ApiError.js";
+import s3 from "../utils/s3Client.js";
+import { v4 as uuid } from "uuid";
 
 const getFiles = asyncHandler(async (req, res) => {
 	const { id } = req.params;
@@ -47,33 +49,45 @@ const getFile = asyncHandler(async (req, res) => {
 const previewFile = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const file = await fileService.getFileById({ id, excludePath: false });
-	const filePath = path.join(file?.contentPath);
-	const readStream = fs.createReadStream(filePath);
+	// const filePath = path.join(file?.contentPath);
+	// const readStream = fs.createReadStream(filePath);
+
+	const data = await s3.getFileContent(file?.contentPath);
 
 	res.setHeader("Content-Disposition", `inline; filename="${file.name}"`);
-	readStream.pipe(res);
+	// readStream.pipe(res);
+	data.Body.pipe(res);
 });
 
 const createFile = asyncHandler(async (req, res) => {
 	const uploadedFile = req.file;
 	const user = req.user;
 	const parent = user?.rootFolder;
+	const { name, size, type } = req.body;
 
-	const newFile = await fileService.createFile({
-		name: uploadedFile.originalname,
-		size: uploadedFile.size,
-		owner: user,
-		parent,
-		contentPath: uploadedFile?.path,
-		type: uploadedFile?.mimetype,
-	});
+	const newFile = await fileService.createFile({ name, size, owner: user, parent, type });
+	// const newFile = await fileService.createFile({
+	// 	// name: uploadedFile.originalname,
+	// 	// size: uploadedFile.size,
+	// 	name,
+	// 	size,
+	// 	owner: user,
+	// 	parent,
+	// 	// contentPath: uploadedFile?.path,
+	// 	type: uploadedFile?.mimetype,
+	// });
 
-	const file = await fileService.updateThumbnail({
-		id: newFile._id,
-		file: uploadedFile,
-	});
+	// const file = await fileService.updateThumbnail({
+	// 	id: newFile._id,
+	// 	file: uploadedFile,
+	// });
 
-	return res.status(201).json(new ApiResponse(201, { file }, "File uploaded successfully"));
+	const ext = name.includes(".") ? name.split(".").pop() : "";
+	const key = ext ? `${uuid()}.${ext}` : uuid();
+	const url = await s3.getUploadUrl(key, type);
+	const updateContentPath = await fileService.updateContentPath({ id: newFile?._id, path: key });
+
+	return res.status(201).json(new ApiResponse(201, { file: newFile, url }, "File uploaded successfully"));
 });
 
 const createFolder = asyncHandler(async (req, res) => {
