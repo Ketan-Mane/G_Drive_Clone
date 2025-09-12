@@ -58,7 +58,9 @@ const FileContextMenu = ({ file }) => {
 					<SquarePen /> Rename
 				</ContextMenuItem>
 				<ContextMenuSeparator />
-				c
+				<ContextMenuItem onClick={() => window.open(file?.downloadUrl)}>
+					<Download /> Download File
+				</ContextMenuItem>
 				<ContextMenuItem
 					onClick={() =>
 						dispatch(

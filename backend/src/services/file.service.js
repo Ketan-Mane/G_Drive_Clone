@@ -6,18 +6,14 @@ import fs from "fs";
 import { THUMBNAIL_DIR } from "../constants.js";
 import userService from "./user.service.js";
 
-const getFiles = async ({ parent, isTrashed = false }) => {
+const getFiles = async ({ parent, contentPath = false }) => {
 	try {
-		return await File.find(
-			{
-				parent,
-				isTrashed,
-			},
-			{
-				contentPath: false,
-				__v: false,
-			}
-		);
+		let query = {};
+
+		if (contentPath) query.contentPath = false;
+		query.__v = false;
+
+		return await File.find({ parent }, query);
 	} catch (error) {
 		throw error;
 	}
@@ -36,7 +32,7 @@ const searchFiles = async ({ search, type, rootFolder }) => {
 	try {
 		const query = {};
 
-		query._id  = { $ne: rootFolder };
+		query._id = { $ne: rootFolder };
 		// 🔍 Search by name
 		if (search) {
 			query.name = { $regex: search, $options: "i" };
@@ -298,6 +294,29 @@ const removeFileAccess = async ({ user, id }) => {
 	}
 };
 
+const addFolderToArchive = async ({ archive, parent, basePath = "" }) => {
+	try {
+		const files = await File.find({ parent });
+
+		if (!files.length) {
+			archive.append(null, { name: basePath + "/" });
+		}
+
+		for (const f of files) {
+			if (f.isFolder) {
+				// recurse into subfolder
+				archive.append(null, { name: path.join(basePath, f.name) + "/" });
+				await addFolderToArchive({ archive, parent: f._id, basePath: path.join(basePath, f.name) });
+			} else {
+				// add file with correct folder path
+				archive.file(f.contentPath, { name: path.join(basePath, f.name) });
+			}
+		}
+	} catch (error) {
+		throw error;
+	}
+};
+
 export default {
 	getFiles,
 	getTrashFiles,
@@ -316,4 +335,5 @@ export default {
 	deleteAllTrashFiles,
 	shareFile,
 	removeFileAccess,
+	addFolderToArchive,
 };

@@ -5,12 +5,13 @@ import path from "path";
 import fs from "fs";
 import ApiError from "../utils/ApiError.js";
 import archiver from "archiver";
+import { TEMP_DIR } from "../constants.js";
 // import { v4 as uuid } from "uuid";
 // import s3 from "../utils/s3Client.js";
 
 const getFiles = asyncHandler(async (req, res) => {
 	const { id } = req.params;
-	const files = await fileService.getFiles({ parent: id });
+	const files = await fileService.getFiles({ parent: id, contentPath: true });
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
@@ -61,13 +62,16 @@ const donwloadFile = asyncHandler(async (req, res) => {
 	const { id } = req.params;
 	const file = await fileService.getFileById({ id, excludePath: false });
 	if (file?.isFolder) {
-		const dbFiles = await fileService.getFiles({ parent: id });
-		const files = dbFiles?.map((file) => ({
-			name: file?.name,
-			filePath: path.join(file?.contentPath),
-		}));
+		const archive = archiver("zip", { zlib: { level: 9 } });
+		archive.pipe(res);
 
-		console.log(files);
+		res.setHeader("Content-Type", "application/zip");
+		res.setHeader("Content-Disposition", `attachment; filename="${file.name || "folder"}.zip"`);
+
+		await fileService.addFolderToArchive({ archive, parent: file._id });
+
+		await archive.finalize();
+		return;
 	}
 	const filePath = path.join(file?.contentPath);
 	const readStream = fs.createReadStream(filePath);
