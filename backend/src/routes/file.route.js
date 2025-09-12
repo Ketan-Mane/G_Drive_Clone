@@ -11,7 +11,7 @@ router.route("/shared-with-me").get(fileController.getSharedWithMeFiles);
 
 router.route("/:id").get(fileController.getFile);
 
-router.route("/download/:id").get(fileController.getFiles);
+router.route("/download/:id").get(fileController.donwloadFile);
 router.route("/preview/:id").get(fileController.previewFile);
 
 router.route("/").post(upload.single("file"), fileController.createFile);

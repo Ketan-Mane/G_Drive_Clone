@@ -27,4 +27,12 @@ const fileSchema = new Schema(
 	}
 );
 
+fileSchema.pre("save", async function (next) {
+	const downloadUrl = `${process.env.APP_URL}/api/files/download/${this._id}`;
+	const previewUrl = `${process.env.APP_URL}/api/files/preview/${this._id}`;
+
+	this.downloadUrl = downloadUrl;
+	this.previewUrl = previewUrl;
+});
+
 export const File = mongoose.model("File", fileSchema);

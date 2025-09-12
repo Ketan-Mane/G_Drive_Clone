@@ -1,6 +1,6 @@
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
 import { openModal } from "@/store/modal/modalSlice";
-import { Files, FolderInput, Info, SquarePen, Trash, UserPlus } from "lucide-react";
+import { Download, Files, FolderInput, Info, SquarePen, Trash, UserPlus } from "lucide-react";
 import { useDispatch } from "react-redux";
 import useMoveToTrash from "../../hooks/useMoveToTrash";
 import toast from "react-hot-toast";
@@ -53,6 +53,9 @@ const FolderContextMenu = ({ folder }) => {
 					<SquarePen /> Rename
 				</ContextMenuItem>
 				<ContextMenuSeparator />
+				<ContextMenuItem onClick={() => window.open(folder?.downloadUrl)}>
+					<Download /> Download File
+				</ContextMenuItem>
 				<ContextMenuItem
 					onClick={() =>
 						dispatch(

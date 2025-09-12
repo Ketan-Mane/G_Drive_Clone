@@ -23,10 +23,20 @@ const getFiles = async ({ parent, isTrashed = false }) => {
 	}
 };
 
-const searchFiles = async ({ search, type, parent }) => {
+const getTrashFiles = async ({ owner }) => {
+	try {
+		const files = await File.find({ owner, isTrashed: true });
+		return files;
+	} catch (error) {
+		throw error;
+	}
+};
+
+const searchFiles = async ({ search, type, rootFolder }) => {
 	try {
 		const query = {};
 
+		query._id  = { $ne: rootFolder };
 		// 🔍 Search by name
 		if (search) {
 			query.name = { $regex: search, $options: "i" };
@@ -126,15 +136,8 @@ const createFile = async ({ name, size, owner, parent, isFolder = false, content
 
 const updateThumbnail = async ({ id, file }) => {
 	try {
-		const downloadUrl = `${process.env.APP_URL}/api/files/download/${id}`;
-		const previewUrl = `${process.env.APP_URL}/api/files/preview/${id}`;
-
 		const thumbnailUrl = await generateThumbnail(id, file.path);
-		const updatedFile = await File.findByIdAndUpdate(id, {
-			thumbnailUrl,
-			downloadUrl,
-			previewUrl,
-		});
+		const updatedFile = await File.findByIdAndUpdate(id, { thumbnailUrl });
 		return updatedFile;
 	} catch (error) {
 		throw error;
@@ -142,17 +145,7 @@ const updateThumbnail = async ({ id, file }) => {
 };
 
 const updateContentPath = async ({ id, path }) => {
-	const downloadUrl = `${process.env.APP_URL}/api/files/download/${id}`;
-	const previewUrl = `${process.env.APP_URL}/api/files/preview/${id}`;
-	const updatedFile = await File.findByIdAndUpdate(
-		id,
-		{
-			contentPath: path,
-			downloadUrl,
-			previewUrl,
-		},
-		{ new: true }
-	);
+	const updatedFile = await File.findByIdAndUpdate(id, { contentPath: path }, { new: true });
 	return updatedFile;
 };
 
@@ -307,6 +300,7 @@ const removeFileAccess = async ({ user, id }) => {
 
 export default {
 	getFiles,
+	getTrashFiles,
 	searchFiles,
 	getSharedWithMeFiles,
 	getFileById,

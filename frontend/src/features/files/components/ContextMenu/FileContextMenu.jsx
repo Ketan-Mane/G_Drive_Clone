@@ -1,5 +1,5 @@
 import { ContextMenuContent, ContextMenuItem, ContextMenuSeparator } from "@/components/ui/context-menu";
-import { Files, FolderInput, Info, SquarePen, Trash, UserPlus } from "lucide-react";
+import { Download, Files, FolderInput, Info, SquarePen, Trash, UserPlus } from "lucide-react";
 import useMoveToTrash from "../../hooks/useMoveToTrash";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
@@ -58,6 +58,7 @@ const FileContextMenu = ({ file }) => {
 					<SquarePen /> Rename
 				</ContextMenuItem>
 				<ContextMenuSeparator />
+				c
 				<ContextMenuItem
 					onClick={() =>
 						dispatch(

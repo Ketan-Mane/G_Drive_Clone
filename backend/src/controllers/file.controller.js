@@ -4,7 +4,8 @@ import ApiResponse from "../utils/ApiResponse.js";
 import path from "path";
 import fs from "fs";
 import ApiError from "../utils/ApiError.js";
-import { v4 as uuid } from "uuid";
+import archiver from "archiver";
+// import { v4 as uuid } from "uuid";
 // import s3 from "../utils/s3Client.js";
 
 const getFiles = asyncHandler(async (req, res) => {
@@ -16,17 +17,14 @@ const getFiles = asyncHandler(async (req, res) => {
 const searchFiles = asyncHandler(async (req, res) => {
 	const { search, type } = req.query;
 	const user = req.user;
-	const files = await fileService.searchFiles({ search, type, parent: user?.rootFolder.toString() });
+	const files = await fileService.searchFiles({ search, type, rootFolder: user?.rootFolder });
 
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
 const getTrashedFiles = asyncHandler(async (req, res) => {
 	const user = req.user;
-	const files = await fileService.getFiles({
-		parent: user?.rootFolder.toString(),
-		isTrashed: true,
-	});
+	const files = await fileService.getTrashFiles({ owner: user?._id });
 	return res.status(200).json(new ApiResponse(200, { files }));
 });
 
@@ -59,11 +57,30 @@ const previewFile = asyncHandler(async (req, res) => {
 	readStream.pipe(res);
 });
 
+const donwloadFile = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	const file = await fileService.getFileById({ id, excludePath: false });
+	if (file?.isFolder) {
+		const dbFiles = await fileService.getFiles({ parent: id });
+		const files = dbFiles?.map((file) => ({
+			name: file?.name,
+			filePath: path.join(file?.contentPath),
+		}));
+
+		console.log(files);
+	}
+	const filePath = path.join(file?.contentPath);
+	const readStream = fs.createReadStream(filePath);
+
+	res.setHeader("Content-Disposition", `attachment; filename="${file.name}"`); //download file
+	readStream.pipe(res);
+});
+
 const createFile = asyncHandler(async (req, res) => {
 	const uploadedFile = req.file;
+	const { name, size, type, parent_id } = req.body;
 	const user = req.user;
-	const parent = user?.rootFolder;
-	// const { name, size, type } = req.body;
+	const parent = parent_id || user?.rootFolder;
 
 	// const newFile = await fileService.createFile({ name, size, owner: user, parent, type });
 	const newFile = await fileService.createFile({
@@ -167,6 +184,7 @@ export default {
 	getSharedWithMeFiles,
 	getFile,
 	previewFile,
+	donwloadFile,
 	createFile,
 	createFolder,
 	updateFile,
