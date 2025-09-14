@@ -1,9 +1,10 @@
 import { Backdrop } from "@mui/material";
-import { X } from "lucide-react";
+import { ArrowDownToLine, Download, X } from "lucide-react";
 import { getFileCategory } from "@/lib/utils";
 import { useDispatch } from "react-redux";
 import { closeModal } from "@/store/modal/modalSlice";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const FilePreview = ({ file }) => {
 	const dispatch = useDispatch();
@@ -76,11 +77,16 @@ const FilePreview = ({ file }) => {
 				<div className="w-full h-full flex flex-col gap-y-2">
 					<div className="w-full flex justify-between items-center ">
 						<div className="sm:text-lg">{name}</div>
-						<button onClick={() => dispatch(closeModal())} className="cursor-pointer">
-							<X />
-						</button>
+						<div className="flex items-center gap-2">
+							<Link to={file?.downloadUrl} className="cursor-pointer">
+								<ArrowDownToLine size={20} />
+							</Link>
+							<button onClick={() => dispatch(closeModal())} className="cursor-pointer">
+								<X />
+							</button>
+						</div>
 					</div>
-					<div className="w-full h-[calc(100vh-40px)]">{renderFile()}</div>
+					<div className="w-full h-[calc(100vh-40px)] p-2">{renderFile()}</div>
 				</div>
 			</Backdrop>
 		</>

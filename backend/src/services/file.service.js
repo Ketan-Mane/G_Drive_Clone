@@ -13,7 +13,7 @@ const getFiles = async ({ parent, contentPath = false }) => {
 		if (contentPath) query.contentPath = false;
 		query.__v = false;
 
-		return await File.find({ parent }, query);
+		return await File.find({ parent, isTrashed: false }, query);
 	} catch (error) {
 		throw error;
 	}

@@ -208,6 +208,7 @@ const UploadFile = forwardRef((props, ref) => {
 						size={20}
 						onClick={() => {
 							setClose(true);
+							setCurrentIndex(0);
 							setQueue([]);
 						}}
 						className="cursor-pointer"

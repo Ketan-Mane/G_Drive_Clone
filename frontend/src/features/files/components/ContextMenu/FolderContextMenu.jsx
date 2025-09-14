@@ -54,7 +54,7 @@ const FolderContextMenu = ({ folder }) => {
 				</ContextMenuItem>
 				<ContextMenuSeparator />
 				<ContextMenuItem onClick={() => window.open(folder?.downloadUrl)}>
-					<Download /> Download File
+					<Download /> Download as zip
 				</ContextMenuItem>
 				<ContextMenuItem
 					onClick={() =>
