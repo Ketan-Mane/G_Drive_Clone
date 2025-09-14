@@ -57,7 +57,34 @@ This project focuses on implementing **industry-standard practices** like presig
 ---
 
 ## 📸 Screenshots
-_(Add screenshots or GIFs of your app UI here, e.g., folder ZIP download demo)_
+
+### Dashboard
+![Dashboard](./screenshots/Dashboard.png)
+
+### Folder Navigation
+![Folder Navigation](./screenshots/Folder_Navigation.png)
+
+### File Details
+![File Details](./screenshots/File_Details.png)
+
+### Preview Files
+![File Preview](./screenshots/Preview_File.png)
+
+### Search Files
+![Search Files](./screenshots/Search_Files.png)
+![Search Files 2](./screenshots/Search_Files_2.png)
+
+### Shared With Me
+![Shared With Me](./screenshots/Shared_With_Me.png)
+
+### Update Access
+![Update File Access](./screenshots/Update_Access.png)
+
+### Deleted Files (Bin)
+![Bin](./screenshots/Bin.png)
+
+### Update Password
+![Update Password](./screenshots/Update_Password.png)
 
 ---
 
