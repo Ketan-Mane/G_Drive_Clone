@@ -1,12 +1,16 @@
 services:
     mongodb:
         image: mongo
-        container_name: mongo
-        restart: always
+        container_name: mongodb
         ports:
             - 27017:27017
+        restart: always
         volumes:
-            - mongo-data:/data/db
+            - .mongodb:/data/db
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=password
+            - MONGO_INITDB_DATABASE=database
         networks:
             - google-drive-network
 
@@ -14,16 +18,13 @@ services:
         build:
             context: ./backend
         container_name: api
-        restart: always
         ports:
             - 8000:8000
+        volumes:
+            - ./backend:/app
+            - /app/node_modules
         environment:
-            - NODE_ENV=production
-            - PORT=8000
-            - MONGODB_URI=mongodb://mongo:27017
-            - DATABASE_NAME=google-drive
-            - JWT_SECRET=secret
-            - APP_URL=http://localhost:8000
+            - CHOKIDAR_USEPOLLING=true
         depends_on:
             - mongodb
         networks:
@@ -32,13 +33,15 @@ services:
     web:
         build:
             context: ./frontend
-            dockerfile: Dockerfile
         container_name: web
-        restart: always
         ports:
-            - 80:5173
+            - 5173:5173
+        volumes:
+            - ./frontend:/app
+            - /app/node_modules
         environment:
-            - VITE_API_URL=http://api:8000
+            - VITE_API_URL=http://localhost:8000
+            - CHOKIDAR_USEPOLLING=true
         depends_on:
             - api
         networks:
@@ -46,7 +49,6 @@ services:
 
 volumes:
     mongo-data:
-
 
 networks:
     google-drive-network:

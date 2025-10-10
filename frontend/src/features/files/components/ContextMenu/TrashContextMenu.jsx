@@ -8,7 +8,7 @@ import { MdRestore } from "react-icons/md";
 import useFileOperation from "../../hooks/useFileOperation";
 import toast from "react-hot-toast";
 import DeleteModal from "@/components/common/DeleteModal";
-import useDeleteFile from "../../hooks/useDeleteFIle";
+import useDeleteFile from "../../hooks/useDeleteFile";
 
 const TrashContextMenu = ({ file }) => {
 	const { mutateAsync: fileOperation, isPending } = useFileOperation();
